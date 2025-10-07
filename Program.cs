@@ -16,7 +16,7 @@ using System.Text.Json.Serialization;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
-var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
+var initialScopes = builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
 
 builder.Services
     .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
