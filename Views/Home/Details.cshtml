@@ -1,0 +1,164 @@
+﻿@model ClearStore.ViewModels.ProductDetailModel
+@{
+    ViewData["Title"] = Model.Product.Name;
+    ViewData["PageTitle"] = Model.Product.Name;
+}
+
+<div class="cp-view-container view-lg" data-product-id="@Model.Product.Id">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["PageTitle"]</h1>
+            <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+        </header>
+        <section class="cp-section">
+            <div class="hstack gap flow align-start">
+                <div class="center center-xs">
+                    <div class="hstack gap align-start">
+                        @if (Model.Product.ProductImages != null)
+                        {
+                            <div class="vstack">
+                                @foreach (var image in Model.Product.ProductImages)
+                                {
+                                    var base64 = Convert.ToBase64String(image.ImageData!);
+                                    var imgSrc = $"data:image/png;base64,{base64}";
+                                    <div class="cp-frame frame-sm" data-thumbnail-frame>
+                                        <div class="product-thumbnail thumbnail thumbnail-xs">
+                                            <img src="@imgSrc" class="full fit-contain" data-thumbnail-src />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <div class="product-thumbnail thumbnail thumbnail-xxl">
+                            @if (Model.Product.ProductImages != null)
+                            {
+                                var productImage = Model.Product.ProductImages.FirstOrDefault(img => img.ImageData != null);
+                                @if (productImage != null && productImage.ImageData != null)
+                                {
+                                    var piBase64 = Convert.ToBase64String(productImage.ImageData!);
+                                    var piSrc = $"data:image/png;base64,{piBase64}";
+                                    <img src="@piSrc" data-thumbnail-target />
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="cp-frame fill">
+                    <form asp-action="Details">
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="Product.Id" />
+                        <input type="hidden" asp-for="Product.Name" />
+                        <input type="hidden" asp-for="Product.Description" />
+                        <input type="hidden" asp-for="Product.CreatedDate" />
+                        <input type="hidden" asp-for="Product.ModifiedDate" />
+                        <input type="hidden" asp-for="Product.IsApparel" />
+                        <input type="hidden" asp-for="Product.ProductGenderId" />
+                        <input type="hidden" asp-for="Product.IsVisible" />
+                        <input type="hidden" asp-for="Product.ProductColorCategoryId" />
+                        @if (Model.ProductColors.Any())
+                        {
+                            <h4>Colors</h4>
+                            <div class="cp-field-actions">
+                                @for (int c = 0; c < Model.ProductColors.Count; c++)
+                                {
+                                    var color = Model.ProductColors[c];
+                                    var colorSizes = Model.Product.ProductInventory.Where(d => d.ProductColorId == color.Id).Select(s => new
+                                    {
+                                        sizeId = s.ProductSizeId,
+                                        quantity = s.Quantity ?? 0
+                                    });
+
+                                    string colorId = $"color_{color.Id}";
+                                    <div class="cp-check-button">
+                                        <input type="hidden" asp-for="ProductColors[c].Id" />
+                                        <input type="hidden" asp-for="ProductColors[c].Name" />
+                                        <input type="hidden" asp-for="ProductColors[c].ProductColorCategoryId" />
+                                        <input type="radio"
+                                               id="@colorId"
+                                               asp-for="SelectedColorId"
+                                               value="@color.Id"
+                                               data-color="@color.Id"
+                                               data-sizes='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(colorSizes))'
+                                               checked="@(c == 0 ? "checked" : null)">
+                                        <label for="@colorId">@color.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @if (Model.ProductSizes.Any())
+                        {
+                            <h4>Sizes</h4>
+                            <div class="cp-field-actions">
+                                @for (int s = 0; s < Model.ProductSizes.Count; s++)
+                                {
+                                    var size = Model.ProductSizes[s];
+                                    string sizeId = $"size_{size.Id}";
+                                    int sizeCount = Model.ProductSizes.Count;
+                                    int midIndex = sizeCount / 2;
+                                    bool isChecked = (s == midIndex) || (s == 0 && sizeCount % 2 == 0);
+                                    <div class="cp-check-button">
+                                        <input type="hidden" asp-for="ProductSizes[s].Id" />
+                                        <input type="hidden" asp-for="ProductSizes[s].Name" />
+                                        <input type="hidden" asp-for="ProductSizes[s].SizeQuantity" />
+                                        <input type="radio"
+                                               id="@sizeId"
+                                               asp-for="SelectedSizeId"
+                                               value="@size.Id"
+                                               data-size="@size.Id"
+                                               data-size-quantity="@size.SizeQuantity"
+                                               checked="@(isChecked == true ? "checked" : null)">
+                                        <label for="@sizeId">@size.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <div class="cp-field-row fill-columns">
+                            <div class="cp-field-group">
+                                <label for="Quantity" class="cp-field-label">Quantity</label>
+                                <input type="number" asp-for="Quantity" class="cp-field" data-quantity />
+                            </div>
+                        </div>
+                        <div class="cp-field-actions">
+                            <button class="cp-button filled" data-submit disabled>Add to cart</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        @if (Model.SimilarProducts.Any())
+        {
+            <section class="cp-section">
+                <header class="section-header">
+                    <h3>Similar products</h3>
+                </header>
+                <div class="cp-cards card-grid">
+                    @foreach (var sp in Model.SimilarProducts)
+                    {
+                        var firstImage = sp.ProductImages.FirstOrDefault(img => img.ImageData != null);
+                        <div class="cp-card">
+                            <div class="card-body">
+                                <div class="product-thumbnail thumbnail thumbnail-md">
+                                    @if (firstImage != null && firstImage.ImageData != null)
+                                    {
+                                        <img src="data:image/png;base64,@Convert.ToBase64String(firstImage.ImageData)" class="full tall fit-contain" />
+                                    }
+                                    else
+                                    {
+                                        <i class="fi fi-error-circle-filled fs-2"></i>
+                                    }
+                                </div>
+                                <div class="fw-600">@sp.Name</div>
+                                <a asp-action="Details" asp-route-id="@sp.Id" class="card-link"></a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/home/details.js" asp-append-version="true"></script>
+}
+

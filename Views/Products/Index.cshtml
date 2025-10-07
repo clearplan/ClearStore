@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ClearStore.Models.Dto.ProductDto>
+@{
+    ViewData["Title"] = "Products";
+    ViewData["PageTitle"] = "Clearstore Home";
+}
+
+<div class="cp-view-container view-xl">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+                <a asp-action="Create" class="cp-button filled">New product</a>
+            </div>
+        </header>
+        <section class="cp-section">
+            <table class="cp-table compact contrast">
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Visibility</th>
+                    <th></th>
+                </tr>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        string visibleIcon = product.Product.IsVisible ? "fi-eye-regular" : "fi-eye-off-regular";
+                        string visibleColor = product.Product.IsVisible ? "success" : "caution";
+                        string apparelType = product.Product.IsApparel == true ? "Yes" : "No";
+                        <tr>
+                            <td>
+                                <div class="hstack gap">
+                                    <div>
+                                        @if (product.ProductImageDto != null)
+                                        {
+                                            <img src="@Url.Action("GetImage", "Images", new { id = product.ProductImageDto.Id })"
+                                                    class="img-6 fit-contain"
+                                                    alt="@product.Product.Name" />
+                                        }
+                                    </div>
+                                    <b>@product.Product.Name</b>
+                                </div>
+                            </td>
+                            <td>
+                                <pre>@product.Product.Description</pre>
+                            </td>
+                            <td>
+                                <span class="cp-tag @visibleColor">
+                                    <i class="fi @visibleIcon fs-1"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@product.Product.Id" class="link">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/products/index.js" asp-append-version="true"></script>
+}

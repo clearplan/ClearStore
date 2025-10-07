@@ -1,0 +1,32 @@
+﻿@model IEnumerable<ClearStore.Models.ProductGender>
+@{
+    ViewData["Title"] = "Product Genders";
+}
+
+<div class="cp-view-container view-md">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+        </header>
+        <section class="cp-section">
+            <table class="cp-table compact">
+                <thead>
+                    <tr>
+                        <th>Gender</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@product.Id" class="link">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </section>
+    </div>
+</div>

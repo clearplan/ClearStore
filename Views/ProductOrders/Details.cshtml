@@ -1,0 +1,116 @@
+﻿@model ClearStore.ViewModels.ProductOrderDetailModel
+
+@{
+    ViewData["Title"] = "Order details";
+}
+
+<div class="cp-view-container view-lg">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-action="Index" class="cp-button gray">Back to orders</a>
+            </div>
+        </header>
+        <div class="cp-region">
+            @if (Model.ProductOrderItems.Any())
+            {
+                <div class="cp-cards card-grid card-fill">
+                    @foreach (var item in Model.ProductOrderItems)
+                    {
+                        <div class="cp-card">
+                            <div class="card-body">
+                                <div class="vstack gap space-between tall">
+                                    @if (item.Image != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(item.Image);
+                                        var imgSrc = $"data:image/png;base64,{base64}";
+                                        <div class="thumbnail thumbnail-md">
+                                            <img src="@imgSrc" class="img-8 fit-contain" />
+                                        </div>
+                                    }
+                                    <div>
+                                        <h5>@item.ProductName</h5>
+                                        <br />
+                                        <button type="button" class="cp-button filled warning compact" data-item="@item.ProductItemId">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            <form asp-action="Details" method="post">
+                <input type="hidden" asp-for="ProductOrder.ProductOrderId" />
+                <input type="hidden" asp-for="ProductOrder.ProductCartId" />
+                <input type="hidden" asp-for="ProductOrder.CreatedDate" />
+                <input type="hidden" asp-for="ProductOrder.ModifiedDate" value="@DateTime.UtcNow" />
+                <input type="hidden" asp-for="ProductOrder.Email" />
+                <fieldset class="cp-fieldset">
+                    <legend>Employee details</legend>
+                    <div class="cp-field-row">
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.Recipient" class="cp-field-label">Recipient</label>
+                            <input asp-for="ProductOrder.Recipient" class="cp-field" readonly />
+                        </div>
+                    </div>
+                    <div class="cp-field-row">
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.Address" class="cp-field-label"></label>
+                            <input asp-for="ProductOrder.Address" class="cp-field" readonly />
+                        </div>
+                    </div>
+                    <div class="cp-field-row">
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.City" class="cp-field-label"></label>
+                            <input asp-for="ProductOrder.City" class="cp-field" readonly />
+                        </div>
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.State" class="cp-field-label"></label>
+                            <input asp-for="ProductOrder.State" class="cp-field" readonly />
+                        </div>
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.ZipCode" class="cp-field-label"></label>
+                            <input asp-for="ProductOrder.ZipCode" class="cp-field" readonly />
+                        </div>
+                    </div>
+                    <div class="cp-field-row">
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.PhoneNumber" class="cp-field-label"></label>
+                            <input asp-for="ProductOrder.PhoneNumber" class="cp-field" readonly />
+                        </div>
+                        <div class="spacer"></div>
+                    </div>
+                    <div class="cp-field-row">
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.Notes" class="cp-field-label"></label>
+                            <input asp-for="ProductOrder.Notes" class="cp-field" readonly />
+                        </div>
+                    </div>
+                    <div class="cp-field-row fill">
+                        <div class="cp-field-group">
+                            <label asp-for="ProductOrder.StatusId" class="cp-field-label required">Status</label>
+                            <select asp-for="ProductOrder.StatusId" class="cp-field">
+                                <option value="1">Processed</option>
+                                <option value="2">Pending</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="cp-field-actions">
+                        <button type="submit" role="button" class="cp-button filled">Update</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="cp-frame">
+            <div class="fw-600 fs-1">Administrators only</div>
+            <div class="vgutter">
+                <button type="button" class="cp-button warning filled" data-delete="@Model.ProductOrder.ProductOrderId">Delete order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/orders/details.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,43 @@
+﻿<ul class="cp-link-list">
+    <li class="list-label">
+        <a asp-controller="Home" asp-action="Index" class="link">Home</a>
+    </li>
+    <li>
+        <a asp-controller="Home" asp-action="Index" asp-route-isApparel="true" class="link">Apparel</a>
+    </li>
+    <li>
+        <a asp-controller="Home" asp-action="Index" asp-route-isApparel="false" class="link">Non-apparel</a>
+    </li>
+    @if ((await AuthorizationService.AuthorizeAsync(User, "storeadmins")).Succeeded)
+    {
+        <li>
+            <hr />
+        </li>
+        <li class="list-label">Admin</li>
+        <li>
+            <a asp-controller="Products" asp-action="Index" class="link">Products</a>
+        </li>
+        <li>
+            <a asp-controller="ProductColors" asp-action="Index" class="link">Product colors</a>
+        </li>
+        <li>
+            <a asp-controller="ProductGenders" asp-action="Index" class="link">Product genders</a>
+        </li>
+        <li>
+            <a asp-controller="ProductInventory" asp-action="Index" class="link">Product inventory</a>
+        </li>
+        <li>
+            <a asp-controller="ProductOffices" asp-action="Index" class="link">Office locations</a>
+        </li>
+        <li>
+            <a asp-controller="ProductSizes" asp-action="Index" class="link">Product sizes</a>
+        </li>
+        <li>
+            <a asp-controller="ProductOrders" asp-action="Index" class="link">Orders</a>
+        </li>
+    }
+    @*@foreach (var claim in User.Claims)
+    {
+        <li>@($"{claim.Type}: {claim.Value}")</li>
+    }*@
+</ul>

@@ -1,0 +1,558 @@
+﻿input, select, textarea, output {
+    font-family: var(--type-sans);
+    background: none;
+    outline: none;
+    font-size: 0.875rem;
+    line-height: inherit;
+}
+
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin: 0;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+        display: inline-block;
+        vertical-align: middle;
+        width: var(--check-size);
+        height: var(--check-size);
+        flex-shrink: 0;
+        padding: 0;
+        appearance: none;
+        background-origin: border-box;
+        user-select: none;
+        color: inherit;
+        background-color: white;
+        border: 1px solid var(--cp-color-gray-20);
+        border-radius: 0.25rem;
+    }
+
+        input[type="checkbox"] + label,
+        input[type="radio"] + label {
+            font-weight: initial;
+        }
+
+    input[type="radio"] {
+        border-radius: 50%;
+    }
+
+        input[type="checkbox"]:disabled:not(:checked),
+        input[type="radio"]:disabled:not(:checked) {
+            background: linear-gradient(-45deg, var(--cp-color-cool-gray-30) 49.5%, var(--cp-color-cool-gray-10) 50.5%);
+            color: var(--mid-gray);
+        }
+
+    input:disabled:not(:checked) + * {
+        color: var(--mid-gray);
+    }
+
+    input:checked:not(:disabled),
+    input:checked:disabled {
+        background-color: var(--cp-color-blue);
+    }
+
+    input[type="checkbox"]:checked,
+    input[type="radio"]:checked {
+        background-repeat: no-repeat;
+        background-position: center;
+        border-color: var(--cp-color-blue);
+    }
+
+    input[type="checkbox"]:checked {
+        background-size: 75%;
+        color: var(--cp-color-blue);
+    }
+
+    input[type="radio"]:checked {
+        background-size: 60%;
+        color: currentColor;
+    }
+
+    input[type=color] {
+        padding: 0 0.125rem;
+    }
+
+    input::-webkit-input-placeholder {
+        color: var(--mid-gray);
+    }
+
+:is(input[readonly], select[readonly], textarea[readonly], output[readonly]) {
+    pointer-events: none;
+}
+
+textarea {
+    field-sizing: content;
+    resize: vertical;
+}
+
+/* checkbox and radio */
+.cp-check {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+    .cp-check::after {
+        content: '';
+        display: none;
+        position: absolute;
+        width: var(--check-size);
+        height: var(--check-size);
+        background: url(/img/icons/checkmark_24_regular_white.svg) no-repeat center center;
+        background-size: 75% 75%;
+        transform-origin: center center;
+    }
+
+    .cp-check:has(input[type="checkbox"]:checked)::after,
+    .cp-check:has(input[type="radio"]:checked)::after {
+        display: block;
+    }
+
+/* field */
+.cp-field {
+    padding: 0.5rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 0.25rem;
+    transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+    .cp-field:hover,
+    .cp-field:focus {
+        border-color: var(--cp-color-blue);
+        box-shadow: 0 0 0 1px var(--cp-color-blue);
+    }
+
+    .cp-field:focus {
+        background-color: var(--cp-color-blue-10);
+    }
+
+    .cp-field[readonly],
+    .cp-field[disabled],
+    .cp-field:disabled,
+    .disabled {
+        background-color: var(--cp-color-cool-gray-20);
+        cursor: not-allowed;
+    }
+
+/* fieldset */
+.cp-fieldset {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 0.25rem;
+}
+
+    .cp-fieldset legend {
+        padding: 0 0.5rem 0.5rem;
+        font-size: 0.875rem;
+        color: var(--mid-gray);
+        translate: 0 0.25rem;
+    }
+
+/* field layout */
+.cp-field-row {
+    --field-row-fit: auto-fit;
+    --field-row-fill: auto-fill;
+    --field-row-type: var(--field-row-fit);
+    --field-column-size: 14rem;
+    display: grid;
+    grid-template-columns: repeat(var(--field-row-type), minmax(var(--field-column-size), 1fr));
+    gap: 1rem;
+    margin-block: 2rem;
+}
+
+    .cp-field-row.compact {
+        margin-block: 1rem;
+    }
+
+
+form .cp-field-row:first-of-type,
+.cp-fieldset .cp-field-row:first-of-type,
+.cp-fieldset legend + * {
+    margin-top: 0;
+}
+
+.cp-view-container.view-xxl .cp-field-row {
+    --field-column-size: 10rem;
+}
+
+.cp-view-container.view-sm .cp-field-row {
+    --field-column-size: 16rem;
+}
+
+.cp-field-row.fill-columns {
+    --field-row-type: var(--field-row-fill);
+}
+
+.cp-fieldset > :is(.cp-field-row, .cp-field-notice, .validation-summary-errors):first-of-type {
+    margin-top: 0;
+}
+
+.cp-field-group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+    .cp-field-group .cp-field:not(select) {
+        width: 100%;
+    }
+
+.cp-field-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+    /* field validation */
+    .cp-field-label.optional::before {
+        content: '*';
+        margin-right: 0.125rem;
+        color: var(--mid-gray);
+    }
+
+    .cp-field-label.optional::after {
+        content: '(optional)';
+        margin-left: 0.125rem;
+        font-weight: 500;
+        color: var(--mid-gray);
+    }
+
+    .cp-field-label.required::before {
+        content: '*';
+        margin-right: 0.125rem;
+        color: red;
+    }
+
+.cp-field-description {
+    margin: 0;
+    color: var(--cp-color-gray);
+    font-size: 0.875rem;
+}
+
+    .cp-field-description:not(:has(+ .cp-field)) {
+        margin-bottom: 0.5rem;
+    }
+
+.field-validation-valid {
+    display: none;
+}
+
+.cp-field.input-validation-error:hover,
+.cp-field.input-validation-error:focus,
+.cp-field.input-validation-error:focus-within,
+.cp-field.input-validation-error {
+    border-color: red;
+    box-shadow: 0 0 0 1px red;
+}
+
+    .cp-field.input-validation-error:focus,
+    .cp-field.input-validation-error:focus-within {
+        background-color: var(--cp-color-red-10);
+    }
+
+.validation-summary-errors {
+    position: relative;
+    margin-block: 1rem;
+    padding: 1rem;
+    background-color: var(--cp-color-red-10);
+    border-left: 4px solid currentColor;
+    border-radius: 0.25rem;
+    color: var(--cp-color-red);
+    font-size: 0.875rem;
+}
+
+    .validation-summary-errors ul {
+        margin: 0;
+        padding: 0;
+        list-style-position: inside;
+    }
+
+.field-validation-error,
+.field-error {
+    position: absolute;
+    bottom: 0;
+    display: block;
+    color: red;
+    font-size: 0.8rem;
+    translate: 0 1.2rem;
+}
+
+/* field actions - layout for form buttons */
+.cp-field-actions {
+    display: flex;
+    align-items: center;
+    flex-flow: row wrap;
+    gap: 1rem;
+    margin-block: 1rem;
+}
+
+/* field switch */
+.cp-field-switch {
+    --switch-border: 2px;
+    --switch-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.875rem;
+}
+
+    .cp-field-switch.inline {
+        justify-content: start;
+    }
+
+input[type="checkbox"][role="switch"] {
+    position: relative;
+    font-size: inherit;
+    appearance: none;
+    box-sizing: content-box;
+    width: calc(var(--switch-size) * 2);
+    height: var(--switch-size);
+    margin: 0;
+    background-color: var(--light-gray);
+    border: var(--switch-border) solid transparent;
+    border-radius: var(--switch-size);
+    vertical-align: text-bottom;
+    transition: background-color 0.3s;
+}
+
+.cp-field-switch label {
+    position: relative;
+    font-size: calc(var(--switch-size) * 1.5);
+    line-height: 1;
+}
+
+    .cp-field-switch label::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: calc(var(--switch-border) * 2);
+        width: calc(var(--switch-size) - var(--switch-border));
+        height: calc(var(--switch-size) - var(--switch-border));
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 1px 0 2px 0 rgba(0 0 0 / 0.1);
+        translate: 0 -50%;
+        transition: translate 0.3s var(--ease-in-out-quart);
+        pointer-events: none;
+    }
+
+.cp-field-switch span {
+    font-size: max(min(1em, 1rem), 0.875rem);
+}
+
+input[type="checkbox"][role="switch"]:checked {
+    background-color: limegreen;
+    background-image: none;
+}
+
+.cp-field-switch label:has(input[type="checkbox"][role="switch"]:checked)::after {
+    translate: 100% -50%;
+}
+
+/* field search */
+.cp-field-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-inline: 0.5rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+    .cp-field-search:not(:has(input[type="search"]:focus)):hover {
+        border-color: var(--cp-color-blue);
+        box-shadow: 0 0 0 1px var(--cp-color-blue);
+    }
+
+    .cp-field-search input[type="search"] {
+        flex-grow: 1;
+        background-color: transparent;
+        border: 0;
+        transition: none;
+    }
+
+    .cp-field-search .cp-field:hover,
+    .cp-field-search .cp-field:focus {
+        background-color: transparent;
+        border: 0;
+        box-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    .cp-field-search:has(input[type="search"]:focus) {
+        border-color: var(--cp-color-blue);
+        box-shadow: 0 0 0 1px var(--cp-color-blue);
+    }
+
+        .cp-field-search:has(input[type="search"]:focus) input::placeholder {
+            color: var(--cp-color-blue);
+        }
+
+/* check button */
+.cp-check-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    background-color: var(--cp-color-cool-gray-20);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+    .cp-check-button input[type="radio"],
+    .cp-check-button input[type="checkbox"] {
+        position: absolute;
+        visibility: hidden;
+    }
+
+    .cp-check-button:not(:has(input[type="radio"]:checked)) label,
+    .cp-check-button:not(:has(input[type="checkbox"]:checked)) label {
+        padding: 0.5rem calc(1rem + 1px);
+    }
+
+    .cp-check-button:is(.success, .warning, .caution, .alert, .issue, .pending, .accepted):not(:has(input[type="radio"]:checked)),
+    .cp-check-button:is(.success, .warning, .caution, .alert, .issue, .pending, .accepted):not(:has(input[type="checkbox"]:checked)) {
+        background-color: transparent;
+    }
+
+    .cp-check-button:has(input[type="radio"]:checked),
+    .cp-check-button:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-blue-10);
+        color: var(--cp-color-blue);
+        outline: 2px solid currentColor;
+    }
+
+    .cp-check-button.success:has(input[type="radio"]:checked),
+    .cp-check-button.success:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-green-10);
+        color: var(--cp-color-green-80);
+    }
+
+    .cp-check-button.warning:has(input[type="radio"]:checked),
+    .cp-check-button.warning:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-red-10);
+        color: var(--cp-color-red-80);
+    }
+
+    .cp-check-button.caution:has(input[type="radio"]:checked),
+    .cp-check-button.caution:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-yellow-10);
+        color: var(--cp-color-yellow-90);
+    }
+
+    .cp-check-button.alert:has(input[type="radio"]:checked),
+    .cp-check-button.alert:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-orange-10);
+        color: var(--cp-color-orange-80);
+    }
+
+    .cp-check-button.issue:has(input[type="radio"]:checked),
+    .cp-check-button.issue:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-purple-10);
+        color: var(--cp-color-purple-80);
+    }
+
+    .cp-check-button.accepted:has(input[type="radio"]:checked),
+    .cp-check-button.accepted:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-teal-10);
+        color: var(--cp-color-teal-80);
+    }
+
+    .cp-check-button.pending:has(input[type="radio"]:checked),
+    .cp-check-button.pending:has(input[type="checkbox"]:checked) {
+        background-color: var(--cp-color-magenta-10);
+        color: var(--cp-color-magenta-80);
+    }
+
+    .cp-check-button:has(input[type="radio"]:disabled) {
+        cursor: not-allowed;
+    }
+
+/* check group (for check buttons) */
+.cp-check-group {
+    display: inline-flex;
+    gap: 0;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    border: 1px solid var(--light-gray);
+    overflow: hidden;
+}
+
+    .cp-check-group .cp-check-button {
+        border-radius: 0;
+    }
+
+    .cp-check-group:is(.success, .warning, .caution, .alert, .issue, .pending, .accepted) {
+        background-color: transparent;
+    }
+
+    .cp-check-group.success:has(input:checked) {
+        border-color: var(--cp-color-green);
+    }
+
+    .cp-check-group.success .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-green-10);
+        color: var(--cp-color-green-80);
+    }
+
+    .cp-check-group.warning:has(input:checked) {
+        border-color: var(--cp-color-red);
+    }
+
+    .cp-check-group.warning .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-red-10);
+        color: var(--cp-color-red-80);
+    }
+
+    .cp-check-group.caution:has(input:checked) {
+        border-color: var(--cp-color-yellow-90);
+    }
+
+    .cp-check-group.caution .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-yellow-10);
+        color: var(--cp-color-yellow-90);
+    }
+
+    .cp-check-group.alert:has(input:checked) {
+        border-color: var(--cp-color-orange);
+    }
+
+    .cp-check-group.alert .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-orange-10);
+        color: var(--cp-color-orange-80);
+    }
+
+    .cp-check-group.issue:has(input:checked) {
+        border-color: var(--cp-color-purple);
+    }
+
+    .cp-check-group.issue .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-purple-10);
+        color: var(--cp-color-purple-80);
+    }
+
+    .cp-check-group.pending:has(input:checked) {
+        border-color: var(--cp-color-magenta);
+    }
+
+    .cp-check-group.pending .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-magenta-10);
+        color: var(--cp-color-magenta-80);
+    }
+
+    .cp-check-group.accepted:has(input:checked) {
+        border-color: var(--cp-color-teal);
+    }
+
+    .cp-check-group.accepted .cp-check-button:has(input:checked) {
+        background-color: var(--cp-color-teal-10);
+        color: var(--cp-color-teal-80);
+    }

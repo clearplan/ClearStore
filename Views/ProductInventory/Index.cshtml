@@ -1,0 +1,100 @@
+﻿@model ClearStore.ViewModels.ProductInventoryModel
+@{
+    ViewData["Title"] = "Product Inventory";
+}
+
+<div class="cp-view-container view-xl">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+                <a asp-action="Export" class="cp-button success filled flex gap-md">
+                    <span>Export to .csv</span>
+                    <i class="fi fi-save-regular fs-1"></i>
+                </a>
+            </div>
+        </header>
+        <section class="cp-section">
+            @foreach (var item in Model.ProductInventoryDto)
+            {
+                bool isApparel = item.Product.IsApparel == true ? true : false;
+                bool productVisible = item.Product.IsVisible ? true : false;
+                string visibleIcon = productVisible ? "fi-eye-regular" : "fi-eye-off-regular";
+                <div class="cp-frame">
+                    <div class="mb-3">
+                        <span class="cp-tag @(productVisible ? "success" : "caution")">
+                            <i class="fi @visibleIcon fs-1"></i>
+                        </span>
+                    </div>
+                    @if (item.ProductImageDto != null)
+                    {
+                        <figure class="istack">
+                            <div class="thumbnail">
+                                <img src="@Url.Action("GetImage", "Images", new { id = item.ProductImageDto.Id })"
+                                     class="img-10"
+                                     alt="@item.ProductImageDto.ImageName" />
+                            </div>
+                        </figure>
+                    }
+                    <h4>@item.Product.Name</h4>
+                    <pre class="text-label">@item.Product.Description</pre>
+                    @if (item.ProductInventory.Count > 0)
+                    {
+                        <table class="cp-table compact">
+                            <tr>
+                                @if (isApparel)
+                                {
+                                    <th>Size</th>
+                                    <th>Color</th>
+                                    <th>Office</th>
+                                }
+                                <th>Quantity</th>
+                                <th>Visibility</th>
+                            </tr>
+                            @foreach (var inventory in item.ProductInventory)
+                            {
+                                var size = Model.ProductSizes.Where(d => d.Id == inventory.ProductSizeId).Select(s => s.Name).FirstOrDefault();
+                                var color = Model.ProductColors.Where(d => d.Id == inventory.ProductColorId).Select(s => s.Name).FirstOrDefault();
+                                var office = Model.ProductOffices.Where(d => d.Id == inventory.ProductOfficeId).Select(s => s.Location).FirstOrDefault();
+                                bool? isVisible = inventory.IsVisible.GetValueOrDefault();
+                                string inventoryVisibleIcon = isVisible != null && isVisible == true ? "fi-eye-regular" : "fi-eye-off-regular";
+                                <tr>
+                                    @if (isApparel)
+                                    {
+                                        <td>
+                                            <input type="text" value="@size" class="cp-field full" readonly />
+                                        </td>
+                                        <td>
+                                            <input type="text" value="@color" class="cp-field full" readonly />
+                                        </td>
+                                        <td>
+                                            <input type="text" value="@office" class="cp-field full" readonly />
+                                        </td>
+                                    }
+                                    <td>
+                                        <input type="text" value="@inventory.Quantity" class="cp-field full" readonly />
+                                    </td>
+                                    <td>
+                                        <span class="cp-tag @(isVisible != null && isVisible == true ? "success" : "caution")">
+                                            <i class="fi @inventoryVisibleIcon fs-1"></i>
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="cp-notice orange compact">
+                            <p><b>Note: </b>No inventory exists for this product. Click the edit button below to add.</p>
+                        </div>
+                    }
+                    <div class="cp-field-actions">
+                        <a asp-action="Edit" asp-route-productId="@item.Product.Id" class="cp-button filled compact">Edit</a>
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+</div>

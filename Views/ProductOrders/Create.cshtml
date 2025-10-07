@@ -1,0 +1,184 @@
+﻿@model ClearStore.ViewModels.ProductOrderModel
+@{
+    ViewData["Title"] = "Place Order";
+}
+
+<div class="cp-view-container view-lg">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+                <a asp-controller="Cart" asp-action="Index" class="cp-button gray">Back to cart</a>
+            </div>
+        </header>
+        <div class="cp-notice warning compact">
+            <p>
+                <b>Note: </b>
+                All orders with in-house swag will ship on Tuesdays. All vendor orders can take up to 8 weeks from the date of the order to be received.
+            </p>
+        </div>
+        <div class="cp-region">
+            <form asp-action="Create" asp-antiforgery="true">
+                <input type="hidden" asp-for="ProductCart.ProductCartId" />
+                <input type="hidden" asp-for="ProductCart.UserId" />
+                <input type="hidden" asp-for="ProductCart.CartGuid" />
+                <input type="hidden" asp-for="ProductCart.Status" value="2" />
+                <input type="hidden" asp-for="ProductOrder.CreatedDate" value="@DateTime.UtcNow" />
+                <input type="hidden" asp-for="ProductOrder.ModifiedDate" value="@DateTime.UtcNow" />
+                <input type="hidden" asp-for="ProductOrder.ProductCartId" value="@Model.ProductCart.ProductCartId" />
+                <input type="hidden" asp-for="ProductOrder.StatusId" value="2" />
+                <input type="hidden" asp-for="ProductOrder.Email" value="@ViewBag.EmailAddress" />
+                @for (int i = 0; i < Model.OrderItems.Count; i++)
+                {
+                    var item = Model.OrderItems[i];
+                    <input type="hidden" asp-for="OrderItems[@i].ProductItemId" />
+                    <input type="hidden" asp-for="OrderItems[@i].ProductId" />
+                    <input type="hidden" asp-for="OrderItems[@i].ProductName" />
+                    <input type="hidden" asp-for="OrderItems[@i].ProductSizeId" />
+                    <input type="hidden" asp-for="OrderItems[@i].SizeName" />
+                    <input type="hidden" asp-for="OrderItems[@i].ProductColorId" />
+                    <input type="hidden" asp-for="OrderItems[@i].ColorName" />
+                    <input type="hidden" asp-for="OrderItems[@i].Quantity" />
+                    <input type="hidden" asp-for="OrderItems[@i].ProductCartId" />
+                    <input type="hidden" asp-for="OrderItems[@i].ProductInventoryId" />
+                    <input type="hidden" asp-for="OrderItems[@i].Image" />
+                }
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.Recipient" class="cp-field-label required"></label>
+                        <input asp-for="ProductOrder.Recipient" class="cp-field" />
+                        <span asp-validation-for="ProductOrder.Recipient"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.Address" class="cp-field-label required"></label>
+                        <input asp-for="ProductOrder.Address" class="cp-field" />
+                        <span asp-validation-for="ProductOrder.Address"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.City" class="cp-field-label required"></label>
+                        <input asp-for="ProductOrder.City" class="cp-field" />
+                        <span asp-validation-for="ProductOrder.City"></span>
+                    </div>
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.State" class="cp-field-label required"></label>
+                        <select asp-for="ProductOrder.State" class="cp-field">
+                            <option value="AL">AL</option>
+                            <option value="AK">AK</option>
+                            <option value="AZ">AZ</option>
+                            <option value="AR">AR</option>
+                            <option value="CA">CA</option>
+                            <option value="CZ">CZ</option>
+                            <option value="CO">CO</option>
+                            <option value="CT">CT</option>
+                            <option value="DE">DE</option>
+                            <option value="DC">DC</option>
+                            <option value="FL">FL</option>
+                            <option value="GA">GA</option>
+                            <option value="HI">HI</option>
+                            <option value="ID">ID</option>
+                            <option value="IL">IL</option>
+                            <option value="IN">IN</option>
+                            <option value="IA">IA</option>
+                            <option value="KS">KS</option>
+                            <option value="KY">KY</option>
+                            <option value="LA">LA</option>
+                            <option value="ME">ME</option>
+                            <option value="MD">MD</option>
+                            <option value="MA">MA</option>
+                            <option value="MI">MI</option>
+                            <option value="MN">MN</option>
+                            <option value="MS">MS</option>
+                            <option value="MO">MO</option>
+                            <option value="MT">MT</option>
+                            <option value="NE">NE</option>
+                            <option value="NV">NV</option>
+                            <option value="NH">NH</option>
+                            <option value="NJ">NJ</option>
+                            <option value="NM">NM</option>
+                            <option value="NY">NY</option>
+                            <option value="NC">NC</option>
+                            <option value="ND">ND</option>
+                            <option value="OH">OH</option>
+                            <option value="OK">OK</option>
+                            <option value="OR">OR</option>
+                            <option value="PA">PA</option>
+                            <option value="RI">RI</option>
+                            <option value="SC">SC</option>
+                            <option value="SD">SD</option>
+                            <option value="TN">TN</option>
+                            <option value="TX">TX</option>
+                            <option value="UT">UT</option>
+                            <option value="VT">VT</option>
+                            <option value="VA">VA</option>
+                            <option value="WA">WA</option>
+                            <option value="WV">WV</option>
+                            <option value="WI">WI</option>
+                            <option value="WY">WY</option>
+                        </select>
+                        <span asp-validation-for="ProductOrder.State"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.ZipCode" class="cp-field-label required"></label>
+                        <input type="number" asp-for="ProductOrder.ZipCode" class="cp-field" placeholder="Maximum 5 digits" data-zipcode />
+                        <span asp-validation-for="ProductOrder.ZipCode"></span>
+                    </div>
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.PhoneNumber" class="cp-field-label required"></label>
+                        <input type="number" asp-for="ProductOrder.PhoneNumber" class="cp-field" placeholder="Maximum 9 digits" data-phonenumber required />
+                        <span asp-validation-for="ProductOrder.PhoneNumber"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="ProductOrder.Notes" class="cp-field-label optional"></label>
+                        <input asp-for="ProductOrder.Notes" class="cp-field" />
+                        <span asp-validation-for="ProductOrder.Notes"></span>
+                    </div>
+                </div>
+                <div class="cp-field-actions">
+                    <button type="submit" role="button" class="cp-button filled">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <aside class="cp-view-guide aside">
+        <h3>Shopping cart</h3>
+        @if (Model.OrderItems.Any())
+        {
+            for (int i = 0; i < Model.OrderItems.Count; i++)
+            {
+                var item = Model.OrderItems[i];
+                string imgSrc = string.Empty;
+                if (item.Image != null)
+                {
+                    var base64 = Convert.ToBase64String(item.Image);
+                    imgSrc = $"data:image/png;base64,{base64}";
+                }
+                <div class="cp-frame" data-item="@item.ProductItemId">
+                    <div class="mx-auto">
+                        <img src="@imgSrc" name="OrderItems[@i].Image" class="img-6 fit-contain" />
+                    </div>
+                    <h4>@item.ProductName</h4>
+                    <button class="cp-button warning filled compact" title="Delete from cart" data-delete="@item.ProductItemId">Delete</button>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="cp-notice warning compact">
+                <p>There are no items in the cart</p>
+            </div>
+        }
+    </aside>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/orders/create.js" asp-append-version="true"></script>
+}

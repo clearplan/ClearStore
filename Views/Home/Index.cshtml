@@ -1,0 +1,81 @@
+﻿@model ClearStore.ViewModels.HomeViewModel;
+@{
+    ViewData["Title"] = "Home";
+    ViewData["PageTitle"] = "Clearstore Home";
+    bool isApparel = ViewBag.IsApparel != null && ViewBag.IsApparel == true ? true : false;
+}
+
+<div class="cp-view-container view-xxl">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["PageTitle"]</h1>
+        </header>
+        @if (ViewBag.CartCountError == true)
+        {
+            <div class="cp-notice caution compact">
+                <p><b>Cart error: </b>You must add items to your cart before placing an order.</p>
+            </div>
+        }
+        <div class="cp-region">
+            @if (isApparel == true)
+            {
+                <div class="hstack gap-md vgutter">
+                    @foreach (var gender in Model.ProductGenders)
+                    {
+                        string genderId = $"gender_{gender.Id}";
+                        string? genderChecked = gender.Id == 1 ? "checked" : null;
+                        <div>
+                            <label for="@genderId" class="cp-check">
+                                <input type="checkbox" id="@genderId" name="gender" value="@gender.Id" checked data-gender>
+                                <span>@gender.Name</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="cp-cards stack-sm">
+                @foreach (var product in Model.ProductDto)
+                {
+                    string productType = product.Product.IsApparel ? "Apparel" : "Non-apparel";
+                    <div class="cp-card" data-product="@product.Product.Id" @(product.Product.ProductGender != null ? $"data-gender-type={product.Product.ProductGender.Id}" : null)>
+                        <div class="card-body">
+                            <div class="card-label">@productType</div>
+                            <div class="product-thumbnail thumbnail">
+                                @if (product.ProductImageDto != null)
+                                {
+                                    <img src="@Url.Action("GetImage", "Images", new { id = product.ProductImageDto.Id })"
+                                         class="full tall fit-contain"
+                                         alt="@product.Product.Name" />
+                                }
+                            </div>
+                            <div class="fw-600 mt-2">@product.Product.Name</div>
+                            <a asp-action="Details" asp-route-id="@product.Product.Id" class="card-link"></a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.ItemAdded == true)
+{
+    <div class="cp-toast success" popover data-item-added>
+        <p><b class="text-green">Success: </b>Item added to your cart</p>
+    </div>
+}
+
+@if (ViewBag.OrderComplete != null && ViewBag.OrderComplete == true)
+{
+    <dialog class="cp-dialog" role="dialog" data-order-complete>
+        <h3>Order successfully placed!</h3>
+        <p>We'll send you an email when it is on the way.</p>
+        <form method="dialog">
+            <button class="cp-button gray">Close</button>
+        </form>
+    </dialog>
+}
+
+@section Scripts {
+    <script type="module" src="~/js/home/index.js" asp-append-version="true"></script>
+}

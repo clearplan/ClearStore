@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="cp-view-container view-md">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+            </div>
+        </header>
+        <div class="cp-notice warning compact">
+            <p><b>Error: </b>You do not have access to the resource requested. Contact your site administrator if you have additional questions.</p>
+        </div>
+    </div>
+</div>

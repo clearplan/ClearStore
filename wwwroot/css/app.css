@@ -1,0 +1,79 @@
+/* home and product view */
+.product-thumbnail {
+    position: relative;
+}
+
+.thumbnail {
+    --thumbnail-size: 10rem;
+    margin-inline: auto;
+    width: var(--thumbnail-size);
+    height: var(--thumbnail-size);
+}
+
+    .thumbnail > img,
+    .thumbnail > svg {
+        object-fit: contain;
+        width: 100%;
+        height: 100%;
+    }
+
+.thumbnail-xxl {
+    --thumbnail-size: 32rem;
+}
+
+.thumbnail-xl {
+    --thumbnail-size: 20rem;
+}
+
+.thumbnail-md {
+    --thumbnail-size: 8rem;
+}
+
+.thumbnail-sm {
+    --thumbnail-size: 6rem;
+}
+
+.thumbnail-xs {
+    --thumbnail-size: 4rem;
+}
+
+[data-thumbnail-frame].active {
+    border-color: var(--cp-color-blue);
+    box-shadow: 0 0 0 0.25rem var(--cp-color-blue-10);
+}
+
+/* details view */
+.product-details-grid {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: 1rem;
+}
+
+.product-preview-image {
+    --thumbnail-size: 32rem;
+    position: relative;
+    width: clamp(320px, 100%, var(--thumbnail-size));
+    height: clamp(320px, 100%, var(--thumbnail-size));
+}
+
+.product-details-grid .product-thumbnails .thumbnail {
+    width: 8rem;
+    height: 8rem;
+    padding: 0.5rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 0.5rem;
+}
+
+    .product-details-grid .product-thumbnails .thumbnail:hover {
+        border-color: var(--cp-color-blue);
+        box-shadow: 0 0 0 0.25rem var(--cp-color-blue-10);
+    }
+
+    .product-details-grid .product-thumbnails .thumbnail > img {
+        height: 100%;
+    }
+
+/* product order */
+.product-order-grid {
+    display: grid;
+}

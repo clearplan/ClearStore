@@ -1,0 +1,197 @@
+﻿.cp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .cp-table caption {
+        padding-left: 0;
+        padding-bottom: 1rem;
+        text-align: left;
+        font-size: 0.8rem;
+        color: var(--mid-gray);
+    }
+
+    .cp-table th {
+        color: var(--mid-gray);
+        font-weight: 500;
+    }
+
+    .cp-table th,
+    .cp-table td {
+        padding: 0.5rem;
+        text-align: left;
+    }
+
+    .cp-table.compact-th thead th {
+        font-size: 0.8rem;
+    }
+
+    .cp-table:is(.padding) th,
+    .cp-table:is(.padding) td {
+        padding: var(--unit-3);
+    }
+
+    .cp-table.text-center th,
+    .cp-table.text-center td {
+        text-align: center;
+    }
+
+    .cp-table.text-right th,
+    .cp-table.text-right td {
+        text-align: right;
+    }
+
+    .cp-table.compact th,
+    .cp-table.compact td {
+        font-size: 0.875rem;
+    }
+
+    .cp-table.compact-sm th,
+    .cp-table.compact-sm td {
+        font-size: 0.8rem;
+    }
+
+    .cp-table.compact-xs th,
+    .cp-table.compact-xs td {
+        font-size: 0.7rem;
+    }
+
+    .cp-table.lined tr {
+        border-bottom: 1px solid var(--light-gray);
+    }
+
+        .cp-table.lined tr:last-child {
+            border-bottom: 0;
+        }
+
+    .cp-table.outlined {
+        border-radius: 0.25rem;
+        outline: 1px solid var(--light-gray);
+    }
+
+    .cp-table.outlined caption {
+        padding: 1rem;
+    }
+
+    .cp-table.outlined th,
+    .cp-table.outlined td {
+        padding: 0.5rem 1rem;
+    }
+
+    .cp-table.bordered th,
+    .cp-table.bordered td {
+        border: 1px solid var(--light-gray);
+    }
+
+    .cp-table.contrast th {
+        color: initial;
+        border-bottom: 1px solid currentColor;
+    }
+
+    .cp-table.contrast td {
+        color: var(--mid-gray);
+    }
+
+    .cp-table.contrast tbody tr th {
+        color: initial;
+        border-bottom-color: var(--light-gray);
+    }
+
+    .cp-table.striped:not(.even) tbody tr:nth-child(odd),
+    .cp-table.striped.odd tbody tr:nth-child(odd) {
+        background-color: var(--cp-color-cool-gray-20);
+    }
+
+    .cp-table.striped.even tbody tr:nth-child(even) {
+        background-color: var(--cp-color-cool-gray-20);
+    }
+
+    .cp-table.default th,
+    .cp-table.default td {
+        border: 0;
+    }
+
+    .cp-table.equalize:has(td:nth-child(2)) th,
+    .cp-table.equalize:has(td:nth-child(2)) td {
+        width: calc(100% / 2);
+    }
+
+    .cp-table.equalize:has(td:nth-child(3)) th,
+    .cp-table.equalize:has(td:nth-child(3)) td {
+        width: calc(100% / 3);
+    }
+
+    .cp-table.equalize:has(td:nth-child(4)) th,
+    .cp-table.equalize:has(td:nth-child(4)) td {
+        width: calc(100% / 4);
+    }
+
+    .cp-table.equalize:has(td:nth-child(5)) th,
+    .cp-table.equalize:has(td:nth-child(5)) td {
+        width: calc(100% / 5);
+    }
+
+    .cp-table.equalize:has(td:nth-child(6)) th,
+    .cp-table.equalize:has(td:nth-child(6)) td {
+        width: calc(100% / 6);
+    }
+
+    .cp-table.equalize:has(td:nth-child(7)) th,
+    .cp-table.equalize:has(td:nth-child(7)) td {
+        width: calc(100% / 7);
+    }
+
+    .cp-table.equalize:has(td:nth-child(8)) th,
+    .cp-table.equalize:has(td:nth-child(8)) td {
+        width: calc(100% / 8);
+    }
+
+    .cp-table.equalize:has(td:nth-child(9)) th,
+    .cp-table.equalize:has(td:nth-child(9)) td {
+        width: calc(100% / 9);
+    }
+
+    .cp-table.equalize:has(td:nth-child(10)) th,
+    .cp-table.equalize:has(td:nth-child(10)) td {
+        width: calc(100% / 10);
+    }
+
+    .cp-table.equalize:has(td:nth-child(11)) th,
+    .cp-table.equalize:has(td:nth-child(11)) td {
+        width: calc(100% / 11);
+    }
+
+    .cp-table.equalize:has(td:nth-child(12)) th,
+    .cp-table.equalize:has(td:nth-child(12)) td {
+        width: calc(100% / 12);
+    }
+
+    .cp-table.row-hover tbody tr:hover {
+        background-color: var(--cp-color-gray-10);
+    }
+
+@media (max-width: 1024px) {
+    .cp-table.responsive thead {
+        display: none;
+    }   
+
+    .cp-table.responsive tr td:last-child {
+        margin-bottom: 1rem;
+    }
+
+    .cp-table.equalize:has(td).responsive td {
+        width: 100%;
+    }
+
+    .cp-table.responsive td {
+        position: relative;
+        display: grid;
+        grid-template-columns: 16ch 1fr;
+        align-items: center;
+    }
+
+    .cp-table.responsive td::before {
+        content: attr(data-cell);
+        margin-right: 1rem;
+    }
+}

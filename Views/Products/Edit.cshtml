@@ -1,0 +1,114 @@
+﻿@model ClearStore.ViewModels.ProductCrudModel
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="cp-view-container view-md">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap space-between">
+                <div class="hstack gap">
+                    <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+                    <a asp-controller="Products" asp-action="Index" class="cp-button gray">Products</a>
+                </div>
+                <button class="cp-button filled warning" data-delete="@Model.Product.Id">Delete Product</button>
+            </div>
+        </header>
+        <section class="cp-section">
+            <form asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Product.CreatedDate" value="@DateTime.UtcNow" />
+                <input type="hidden" asp-for="Product.ModifiedDate" value="@DateTime.UtcNow" />
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="Product.Name" class="cp-field-label required"></label>
+                        <input asp-for="Product.Name" class="cp-field" />
+                        <span asp-validation-for="Product.Name"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="Product.Description" class="cp-field-label required"></label>
+                        <textarea asp-for="Product.Description" class="cp-field"></textarea>
+                        <span asp-validation-for="Product.Description"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="Product.IsApparel" class="cp-field-label required">Is appparel?</label>
+                        <select asp-for="Product.IsApparel" class="cp-field" data-isapparel>
+                            <option value="">--Select--</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                        <span asp-validation-for="Product.IsApparel"></span>
+                    </div>
+                    <div class="cp-field-group">
+                        <label asp-for="Product.ProductColorCategoryId" class="cp-field-label optional">Color category</label>
+                        <select asp-for="Product.ProductColorCategoryId" class="cp-field" data-color-category>
+                            <option value="">--Select--</option>
+                            @foreach (var colorCategory in Model.ProductColorCategories)
+                            {
+                                <option value="@colorCategory.Id">@colorCategory.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Product.ProductColorCategoryId"></span>
+                    </div>
+                    <div class="cp-field-group">
+                        <label asp-for="Product.ProductGenderId" class="cp-field-label optional">Gender</label>
+                        <select asp-for="Product.ProductGenderId" class="cp-field full" data-gender>
+                            <option value="">--Select--</option>
+                            @foreach (var gender in Model.ProductGenders)
+                            {
+                                <option value="@gender.Id">@gender.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Product.ProductGenderId"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="Product.IsVisible" class="cp-field-label required">Is visible?</label>
+                        <p class="cp-field-description">Controls if this product should be visible to users</p>
+                        <select asp-for="Product.IsVisible" class="cp-field">
+                            <option value="">--Select--</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                        <span asp-validation-for="Product.IsVisible"></span>
+                    </div>
+                    <div class="spacer"></div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label class="cp-field-label required">Upload image(s)</label>
+                        <input type="file" asp-for="ProductImages" class="cp-field" multiple />
+                    </div>
+                </div>
+                @if (Model.Images != null)
+                {
+                    <div class="hstack gap">
+                        @foreach (var image in Model.Images)
+                        {
+                            <div class="cp-frame compact">
+                                <div>
+                                    <img src="@Url.Action("GetImage", "Images", new { id = image.Id })" class="img-8" />
+                                </div>
+                                <div class="cp-button warning compact filled istack" data-delete-image="@image.Id">
+                                    <i class="fi fi-delete-regular fs-1"></i>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                <div class="cp-field-actions">
+                    <button type="submit" role="button" class="cp-button filled" data-submit>Update</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/products/edit.js" asp-append-version="true"></script>
+}

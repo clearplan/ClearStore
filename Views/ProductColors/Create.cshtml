@@ -1,0 +1,40 @@
+﻿@model ClearStore.Models.ProductColor
+@{
+    ViewData["Title"] = "Add Product Color";
+}
+
+<div class="cp-view-container view-md">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+            <a asp-controller="ProductColors" asp-action="Index" class="cp-button gray">Product colors</a>
+        </header>
+        <section class="cp-section">
+            <form asp-action="Create" asp-antiforgery="true">
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="Name" class="cp-field-label"></label>
+                        <input asp-for="Name" class="cp-field" />
+                        <span asp-validation-for="Name"></span>
+                    </div>
+                </div>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="ProductColorCategoryId" class="cp-field-label"></label>
+                        <select asp-for="ProductColorCategoryId" class="cp-field">
+                            @foreach (var colorCategory in ViewBag.ColorCategories)
+                            {
+                                <option value="@colorCategory.Id">@colorCategory.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProductColorCategoryId"></span>
+                    </div>
+                </div>
+                <div class="cp-field-actions">
+                    <button type="submit" role="button" class="cp-button filled">Create</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

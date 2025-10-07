@@ -1,0 +1,30 @@
+﻿@model ClearStore.Models.ProductOffice
+@{
+    ViewData["Title"] = "Add Office Location";
+}
+
+<div class="cp-view-container view-md">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+                <a asp-controller="ProductOffices" asp-action="Index" class="cp-button gray">Product offices</a>
+            </div>
+        </header>
+        <section class="cp-section">
+            <form asp-action="Create" asp-antiforgery="true">
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label asp-for="Location" class="cp-field-label"></label>
+                        <input asp-for="Location" class="cp-field" />
+                        <span asp-validation-for="Location"></span>
+                    </div>
+                </div>
+                <div class="cp-field-actions">
+                    <button type="submit" role="button" class="cp-button filled">Create</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

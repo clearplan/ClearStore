@@ -1,0 +1,54 @@
+﻿@model IEnumerable<ClearStore.Models.ProductOrder>
+@{
+    ViewData["Title"] = "Product Orders";
+}
+
+<div class="cp-view-container view-xl">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+            </div>
+        </header>
+        <section class="cp-section">
+            <table class="cp-table compact contrast">
+                <thead>
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Zipcode</th>
+                        <th>Phone number</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @foreach (var order in Model)
+                {
+                    var phoneNumber = order.PhoneNumber.HasValue ? String.Format("{0:(###) ###-####}", order.PhoneNumber.Value) : "N/A";
+                    <tr>
+                        <td>@order.ProductOrderId</td>
+                        <td>
+                            <a href="mailto:@order.Email" class="link hstack gap-sm">
+                                <i class="fi fi-mail-regular fs-1"></i>
+                                <span>@order.Recipient</span>
+                            </a>
+                        </td>
+                        <td>@order.Address</td>
+                        <td>@order.City</td>
+                        <td>@order.State</td>
+                        <td>@order.ZipCode</td>
+                        <td>@phoneNumber</td>
+                        <td>@order.CreatedDate</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@order.ProductOrderId" class="link">View</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </section>
+    </div>
+</div>

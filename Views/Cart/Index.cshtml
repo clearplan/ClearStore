@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ClearStore.Models.Dto.ProductDetailDto>
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="cp-view-container view-md">
+    <div class="cp-view-content">
+        <header class="cp-view-header">
+            <h1>@ViewData["Title"]</h1>
+            <div class="hstack gap">
+                <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
+            </div>
+        </header>
+        <div class="cp-region">
+            @if (Model.Any())
+            {
+                <h3>Order summary</h3>
+                <div class="vstack gap-xl">
+                    @foreach (var item in Model)
+                    {
+                        <div class="hstack gap-xl">
+                            <div>
+                                @if (item.Image != null)
+                                {
+                                    var base64 = Convert.ToBase64String(item.Image);
+                                    var imgSrc = $"data:image/png;base64,{base64}";
+                                    <img src="@imgSrc" class="img-10 fit-contain" />
+                                }
+                            </div>
+                            <div>
+                                <dl class="gap-md">
+                                    <dt>Name</dt>
+                                    <dd>@item.ProductName</dd>
+                                    <dt>Color</dt>
+                                    <dd>@item.ColorName</dd>
+                                    <dt>Size</dt>
+                                    <dd>@item.SizeName</dd>
+                                    <dt>Quantity</dt>
+                                    <dd>@item.Quantity</dd>
+                                </dl>
+                                <button class="cp-button warning filled compact" data-delete="@item.ProductItemId">Delete</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="cp-field-actions">
+                    <a asp-controller="ProductOrders" asp-action="Create" asp-route-cartId="@ViewBag.CartId" class="cp-button filled blue">Proceed to checkout</a>
+                </div>
+            }
+            else
+            {
+                <div class="cp-notice info compact">
+                    <p>Your shopping cart is empty. Go back to the store home to <a asp-controller="Home" asp-action="Index" class="link">continue shopping</a>.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/cart/details.js" asp-append-version="true"></script>
+}
