@@ -22,5 +22,12 @@
                 ? dateTime.ToLocalTime().ToLocalOffsetIfUtc()
                 : ((DateTimeOffset)dateTime).Offset;
         }
+
+        public static DateTime DateYear2Digit(this DateTime dateTime)
+        {
+            return dateTime.ToString("MM/dd/yy") is string formattedDate
+                ? DateTime.Parse(formattedDate)
+                : dateTime;
+        }
     }
 }
