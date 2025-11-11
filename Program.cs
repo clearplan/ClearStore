@@ -53,8 +53,6 @@ builder.Services.AddAuthorization(options =>
         c.User.HasClaim("groups", PermissionGroup.AppStoreAdmins) ||
         c.User.HasClaim("groups", PermissionGroup.AppAdministrators)
     ));
-
-    //options.FallbackPolicy = options.DefaultPolicy;
 });
 
 builder.Services
