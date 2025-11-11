@@ -110,7 +110,9 @@ namespace ClearStore.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var cart = await _context.ProductCarts.Where(d => d.ProductCartId == model.ProductOrder.ProductCartId).FirstOrDefaultAsync();
+                    var cart = await _context.ProductCarts
+                        .Where(d => d.ProductCartId == model.ProductOrder.ProductCartId)
+                        .FirstOrDefaultAsync();
 
                     if (cart != null)
                     {
@@ -123,7 +125,6 @@ namespace ClearStore.Controllers
                     // testing email
                     string to = "heatherlaudani@clearplanconsulting.com";
                     string subject = "New store order";
-                    var ccs = new List<string> { model.ProductOrder.Email };
                     StringBuilder body = new StringBuilder();
 
                     body.AppendLine("<div style=\"max-width:1366px;margin:0 auto;\">");
@@ -137,7 +138,11 @@ namespace ClearStore.Controllers
                     body.AppendLine($"<td>Name: </td><td>{model.ProductOrder.Recipient}</td>");
                     body.AppendLine("</tr>");
                     body.AppendLine("<tr>");
-                    body.AppendLine($"<td>Address: </td><td>{model.ProductOrder.Address}</td>");
+                    body.AppendLine($"<td>Address: </td>");
+                    body.AppendLine($"<td>");
+                    body.AppendLine($"<div>{model.ProductOrder.Address}</div>");
+                    body.AppendLine($"<div>{model.ProductOrder.City}, {model.ProductOrder.State} {model.ProductOrder.ZipCode}</div>");
+                    body.AppendLine($"</td>");
                     body.AppendLine("</tr>");
 
                     if (model.ProductOrder.PhoneNumber.HasValue)
@@ -184,6 +189,7 @@ namespace ClearStore.Controllers
                             {
                                 body.AppendLine($"<dt>Size: </dt><dd>{item.SizeName}</dd>");
                             }
+                            // OUTPUT THE GENDER HERE
 
                             body.AppendLine($"</dl>");
                             body.AppendLine("</td>");
@@ -195,35 +201,36 @@ namespace ClearStore.Controllers
                     body.AppendLine("</table>");
 
                     body.AppendLine("<h4></h4>");
-                    body.AppendLine($"<a href=\"https://clearstore.azurewebsites.net/orders/details/{model.ProductOrder.ProductOrderId}\" target=\"_blank\">https://clearstore.azurewebsites.net/orders/details/{model.ProductOrder.ProductOrderId}</a>");
+                    body.AppendLine($"<a href=\"https://clearstore.azurewebsites.net/product-orders/details/{model.ProductOrder.ProductOrderId}\" target=\"_blank\">https://clearstore.azurewebsites.net/orders/details/{model.ProductOrder.ProductOrderId}</a>");
                     body.AppendLine("</div>");
                     body.AppendLine("</div>");
 
-                    var messageBody = new SendMailPostRequestBody
+                    if (model.ProductOrder.Email != null)
                     {
-                        Message = new Message
+                        var messageBody = new SendMailPostRequestBody
                         {
-                            Subject = subject,
-                            Body = new ItemBody
+                            Message = new Message
                             {
-                                ContentType = BodyType.Html,
-                                Content = body.ToString()
-                            },
-                            ToRecipients = new List<Recipient>()
-                            {
-                                new Recipient
+                                Subject = subject,
+                                Body = new ItemBody
                                 {
-                                    EmailAddress = new EmailAddress
-                                    {
-                                        Address = to
-                                    }
+                                    ContentType = BodyType.Html,
+                                    Content = body.ToString()
+                                },
+                                ToRecipients = new List<Recipient>()
+                                {
+                                    new Recipient { EmailAddress = new EmailAddress { Address = to?.Trim() } }
+                                },
+                                CcRecipients = new List<Recipient>()
+                                {
+                                    new Recipient{ EmailAddress = new EmailAddress { Address = model.ProductOrder.Email.Trim() } }
                                 }
-                            }
-                        },
-                        SaveToSentItems = true
-                    };
+                            },
+                            SaveToSentItems = true
+                        };
 
-                    await _client.Me.SendMail.PostAsync(messageBody);
+                        await _client.Me.SendMail.PostAsync(messageBody);
+                    }
 
                     await transaction.CommitAsync();
 
@@ -270,6 +277,7 @@ namespace ClearStore.Controllers
                         .Where(pi => pi.ProductCartId == productOrder.ProductCartId)
                         .Select(pi => new ProductOrderItemDto
                         {
+                            IsApparel = pi.Product != null ? (bool?)pi.Product.IsApparel : null,
                             ProductCartId = pi.ProductCartId,
                             ProductItemId = pi.ProductItemId,
                             ProductId = pi.ProductId,
@@ -278,6 +286,8 @@ namespace ClearStore.Controllers
                             SizeName = pi.ProductSize != null ? pi.ProductSize.Name : null,
                             ProductColorId = pi.ProductColorId,
                             ColorName = pi.ProductColor != null ? pi.ProductColor.Name : null,
+                            ProductGenderId = pi.ProductGenderId,
+                            GenderName = pi.Product != null && pi.Product.ProductGender != null ? pi.Product.ProductGender.Name : null,
                             Quantity = pi.Quantity,
                             ProductInventoryId = pi.ProductInventoryId,
                             Image = _context.ProductImages
