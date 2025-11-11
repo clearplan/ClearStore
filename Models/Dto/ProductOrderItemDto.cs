@@ -2,6 +2,8 @@
 {
     public class ProductOrderItemDto
     {
+        public bool? IsApparel { get; set; }
+
         public int ProductItemId { get; set; }
 
         public int? ProductId { get; set; }
@@ -15,6 +17,10 @@
         public int? ProductColorId { get; set; }
 
         public string? ColorName { get; set; }
+
+        public int? ProductGenderId { get; set; }
+
+        public string? GenderName { get; set; }
 
         public int? Quantity { get; set; }
 
