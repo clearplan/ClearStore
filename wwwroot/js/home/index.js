@@ -19,13 +19,6 @@ class Home {
             });
         }
 
-        // item has been successfully added from details
-        this.itemAdded = document.querySelector('[data-item-added]');
-
-        if (this.itemAdded) {
-            this.itemAdded.showPopover();
-        }
-
         // order has been completed
         this.orderComplete = document.querySelector('[data-order-complete]');
 

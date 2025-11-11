@@ -16,6 +16,12 @@
                 <p><b>Cart error: </b>You must add items to your cart before placing an order.</p>
             </div>
         }
+        @if (ViewBag.ItemAdded == true)
+        {
+            <div class="cp-notice green compact">
+                <p><b>Success!</b> Item added to your cart. Click the icon in the upper right corner to view your cart.</p>
+            </div>
+        }
         <div class="cp-region">
             @if (isApparel == true)
             {
@@ -57,13 +63,6 @@
         </div>
     </div>
 </div>
-
-@if (ViewBag.ItemAdded == true)
-{
-    <div class="cp-toast success" popover data-item-added>
-        <p><b class="text-green">Success: </b>Item added to your cart</p>
-    </div>
-}
 
 @if (ViewBag.OrderComplete != null && ViewBag.OrderComplete == true)
 {
