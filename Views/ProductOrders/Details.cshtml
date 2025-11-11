@@ -20,18 +20,32 @@
                     {
                         <div class="cp-card">
                             <div class="card-body">
-                                <div class="vstack gap space-between tall">
-                                    @if (item.Image != null)
-                                    {
-                                        var base64 = Convert.ToBase64String(item.Image);
-                                        var imgSrc = $"data:image/png;base64,{base64}";
-                                        <div class="thumbnail thumbnail-md">
-                                            <img src="@imgSrc" class="img-8 fit-contain" />
-                                        </div>
-                                    }
+                                <div class="vstack gap-md space-between tall">
                                     <div>
-                                        <h5>@item.ProductName</h5>
+                                        @if (item.Image != null)
+                                        {
+                                            var base64 = Convert.ToBase64String(item.Image);
+                                            var imgSrc = $"data:image/png;base64,{base64}";
+                                            <div class="thumbnail thumbnail-md">
+                                                <img src="@imgSrc" class="img-8 fit-contain" />
+                                            </div>
+                                        }
                                         <br />
+                                        <h5>@item.ProductName</h5>
+                                    </div>
+                                    <div>
+                                        <dl class="title-sm gap-md fs-14">
+                                            <dt>Color</dt>
+                                            <dd>@(item.ColorName ?? "N/A")</dd>
+                                            <dt>Size</dt>
+                                            <dd>@(item.SizeName ?? "N/A")</dd>
+                                            <dt>Gender</dt>
+                                            <dd>@(item.GenderName ?? "N/A")</dd>
+                                            <dt>Quantity</dt>
+                                            <dd>@item.Quantity</dd>
+                                        </dl>
+                                    </div>
+                                    <div>
                                         <button type="button" class="cp-button filled warning compact" data-item="@item.ProductItemId">Remove</button>
                                     </div>
                                 </div>
