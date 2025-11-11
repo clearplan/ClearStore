@@ -19,6 +19,8 @@ namespace ClearStore.Models
 
         public int? ProductColorId { get; set; }
 
+        public int? ProductGenderId { get; set; }
+
         public string? UserId { get; set; }
 
         public int? Quantity { get; set; }
@@ -36,6 +38,9 @@ namespace ClearStore.Models
 
         [ForeignKey(nameof(ProductColorId))]
         public virtual ProductColor? ProductColor { get; set; }
+        
+        //[ForeignKey(nameof(ProductGenderId))]
+        //public virtual ProductGender? ProductGender { get; set; }
 
         [ForeignKey(nameof(ProductCartId))]
         public virtual ProductCart? ProductCart { get; set; }
