@@ -1,47 +1,49 @@
 using ClearStore.Data;
-using ClearStore.Graph;
+using ClearStore.Models.Email;
 using ClearStore.Security;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
 using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.Resource;
 using Microsoft.Identity.Web.UI;
-using Microsoft.Kiota.Abstractions.Authentication;
-using System.Security.Claims;
 using System.Text.Json.Serialization;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
 var initialScopes = builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
 
+builder.Services.AddDistributedSqlServerCache(options =>
+{
+    options.ConnectionString =
+        builder.Configuration.GetConnectionString("StoreContext");
+    options.SchemaName = "dbo";
+    options.TableName = "TokenCache";
+
+    // you don't actually need this, but i'm doing it anyway
+    options.DefaultSlidingExpiration = TimeSpan.FromHours(1);
+    options.ExpiredItemsDeletionInterval = TimeSpan.FromHours(1);    
+});
+
 builder.Services
     .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
     .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-    .AddInMemoryTokenCaches();
+    .AddDistributedTokenCaches();
 
-builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
-    options.AccessDeniedPath = new PathString("/account/accessdenied");
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true;
-});
+//builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+//{
+//    options.AccessDeniedPath = new PathString("/account/accessdenied");
+//    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+//    options.SlidingExpiration = true;
+//});
 
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddScoped(service =>
-{
-    var httpContextAccessor = service.GetRequiredService<IHttpContextAccessor>();
-    var token = service.GetRequiredService<ITokenAcquisition>();
-    var authenticationProvider = new BaseBearerTokenAuthenticationProvider(new TokenProvider(token, builder.Configuration, httpContextAccessor));
-    var graphServiceClient = new GraphServiceClient(authenticationProvider);
-    return graphServiceClient;
-});
+//builder.Services.AddMicrosoftIdentityConsentHandler();
 
 builder.Services.AddAuthorization(options =>
 {
@@ -55,12 +57,10 @@ builder.Services.AddAuthorization(options =>
     ));
 });
 
-builder.Services
-    .AddDbContext<StoreContext>(options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("StoreContext"));
-        options.EnableSensitiveDataLogging();
-    });
+builder.Services.AddDbContext<StoreContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("StoreContext"));
+});
 
 builder.Services.Configure<RouteOptions>(options =>
 {
@@ -75,24 +75,23 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = int.MaxValue;
 });
 
-builder.Services.AddControllersWithViews(options =>
+builder.Services.AddRazorPages().AddMvcOptions(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
     options.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(options =>
+}).AddMicrosoftIdentityUI()
+.AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-});
-
-builder.Services.AddRazorPages().AddMicrosoftIdentityUI();
-
-builder.Services.AddMvc().AddViewOptions(options =>
+})
+.AddViewOptions(options =>
 {
     options.HtmlHelperOptions.FormInputRenderMode = Microsoft.AspNetCore.Mvc.Rendering.FormInputRenderMode.AlwaysUseCurrentCulture;
     options.HtmlHelperOptions.Html5DateRenderingMode = Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode.CurrentCulture;
 });
+
 
 var app = builder.Build();
 
@@ -106,7 +105,6 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -115,5 +113,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+app.MapRazorPages();
 
 app.Run();
