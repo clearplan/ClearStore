@@ -10,6 +10,7 @@ namespace ClearStore.Extensions
             return string.IsNullOrEmpty(value.ToString()) ? string.Empty : value.ToString("C2");
         }
 
+
         public static string ToShortCurrency(this decimal value)
         {
             if (value >= 1000000)
@@ -42,6 +43,24 @@ namespace ClearStore.Extensions
         }
 
 
+        public static string GetImageContentType(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return "application/octet-stream";
+            }
+
+            var ext = Path.GetExtension(fileName).ToLowerInvariant();
+
+            return ext switch
+            {
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                _ => "application/octet-stream"
+            };
+        }
+
         public static string SanitizeName(string name)
         {
             char[] chars = Path.GetInvalidFileNameChars();
@@ -69,6 +88,7 @@ namespace ClearStore.Extensions
 
             return sanitized;
         }
+
 
         public static string EscapeCsv(string input)
         {
