@@ -27,6 +27,7 @@ namespace ClearStore.Controllers
             }
 
             var extension = Path.GetExtension(image.ImageName)?.ToLowerInvariant();
+
             var contentType = extension switch
             {
                 ".jpg" or ".jpeg" => "image/jpeg",
