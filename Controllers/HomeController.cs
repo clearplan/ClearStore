@@ -1,29 +1,56 @@
 using ClearStore.Data;
+using ClearStore.Extensions;
 using ClearStore.Models;
 using ClearStore.Models.Dto;
 using ClearStore.ViewModels;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Graph;
+using Microsoft.Graph.Me.SendMail;
+using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ExternalConnectors;
+using Microsoft.Graph.Users.Item.SendMail;
 using Microsoft.Identity.Web;
+using MimeKit;
+using QuestPDF.Drawing;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System.Diagnostics;
+using System.Linq;
+using System.Numerics;
 using System.Security.Claims;
+using System.Text;
+using EmailAddress = SendGrid.Helpers.Mail.EmailAddress;
 
 namespace ClearStore.Controllers
 {
-
+    [Authorize]
+    [AuthorizeForScopes(ScopeKeySection = "MicrosoftGraph:Scopes")]
     public class HomeController : Controller
     {
         private readonly StoreContext _context;
+        private readonly GraphServiceClient _client;
+        private readonly IConfiguration _config;
 
-        public HomeController(StoreContext context)
+        public HomeController(StoreContext context, GraphServiceClient client, IConfiguration config)
         {
             _context = context;
+            _client = client;
+            _config = config;
         }
 
         public async Task<IActionResult> Index(bool? isApparel = null)
         {
+            // build the toke cache for the user
+            var me = await _client.Me.GetAsync();
+
             var productQuery = _context.Products
                 .Where(p => p.IsVisible == true)
                 .Include(d => d.ProductGender)
@@ -166,14 +193,6 @@ namespace ClearStore.Controllers
 
             return View(model);
         }
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
 
 
         private async Task<ProductDetailModel> BuildProductDetailModelAsync(int id)
