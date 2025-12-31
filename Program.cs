@@ -1,5 +1,4 @@
 using ClearStore.Data;
-using ClearStore.Models.Email;
 using ClearStore.Security;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
