@@ -28,6 +28,8 @@
 
         public int? ProductInventoryId { get; set; }
 
-        public byte[]? Image { get; set; }
+        //public byte[]? Image { get; set; }
+
+        public ImageDetail? ImageDetail { get; set; }
     }
 }
