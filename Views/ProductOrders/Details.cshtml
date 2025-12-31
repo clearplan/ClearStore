@@ -22,12 +22,12 @@
                             <div class="card-body">
                                 <div class="vstack gap-md space-between tall">
                                     <div>
-                                        @if (item.Image != null)
+                                        @if (item.ImageDetail != null && item.ImageDetail.ImageData != null)
                                         {
-                                            var base64 = Convert.ToBase64String(item.Image);
-                                            var imgSrc = $"data:image/png;base64,{base64}";
                                             <div class="thumbnail thumbnail-md">
-                                                <img src="@imgSrc" class="img-8 fit-contain" />
+                                                <img src="@Url.Action("GetImage", "Images", new { id = item.ImageDetail.ImageId })"
+                                                     class="full tall fit-contain"
+                                                     alt="@item.ProductName" />
                                             </div>
                                         }
                                         <br />
