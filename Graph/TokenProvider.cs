@@ -26,7 +26,7 @@ namespace ClearStore.Graph
             try
             {
                 var user = _httpContextAccessor.HttpContext?.User;
-                var token = await _tokenAcquisition.GetAccessTokenForUserAsync(scopes, user: user);
+                var token = await _tokenAcquisition.GetAccessTokenForUserAsync(scopes);
                 return token;
             }
             catch (MsalUiRequiredException ex)
