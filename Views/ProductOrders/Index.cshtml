@@ -23,7 +23,6 @@
                         <th>Zipcode</th>
                         <th>Phone number</th>
                         <th>Created</th>
-                        <th></th>
                     </tr>
                 </thead>
                 @foreach (var order in Model)
@@ -32,10 +31,7 @@
                     <tr>
                         <td>@order.ProductOrderId</td>
                         <td>
-                            <a href="mailto:@order.Email" class="link hstack gap-sm">
-                                <i class="fi fi-mail-regular fs-1"></i>
-                                <span>@order.Recipient</span>
-                            </a>
+                            <a asp-action="Details" asp-route-id="@order.ProductOrderId" class="link">@order.Recipient</a>
                         </td>
                         <td>@order.Address</td>
                         <td>@order.City</td>
@@ -43,9 +39,6 @@
                         <td>@order.ZipCode</td>
                         <td>@phoneNumber</td>
                         <td>@order.CreatedDate</td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@order.ProductOrderId" class="link">View</a>
-                        </td>
                     </tr>
                 }
             </table>
