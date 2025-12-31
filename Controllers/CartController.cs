@@ -1,4 +1,5 @@
 ﻿using ClearStore.Data;
+using ClearStore.Models;
 using ClearStore.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,11 +48,22 @@ namespace ClearStore.Controllers
                         SizeName = pi.ProductSize != null ? pi.ProductSize.Name : null,
                         ProductColorId = pi.ProductColorId,
                         ColorName = pi.ProductColor != null ? pi.ProductColor.Name : null,
+                        ProductGenderId = pi.ProductGenderId,
+                        GenderName = pi.Product != null && pi.Product.ProductGender != null ? pi.Product.ProductGender.Name : null,
                         Quantity = pi.Quantity,
                         ProductInventoryId = pi.ProductInventoryId,
                         Image = _context.ProductImages
                             .Where(d => d.ProductId == pi.ProductId)
                             .Select(i => i.ImageData)
+                            .FirstOrDefault(),
+                        ImageDetail = _context.ProductImages
+                            .Where(d => d.ProductId == pi.ProductId)
+                            .Select(i => new ImageDetail
+                            {
+                                ImageId = i.Id,
+                                ImageData = i.ImageData,
+                                ImageName = i.ImageName ?? string.Empty
+                            })
                             .FirstOrDefault()
                     })
                     .ToListAsync();
