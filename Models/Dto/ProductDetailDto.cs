@@ -16,12 +16,19 @@
 
         public string? ColorName { get; set; }
 
+        public int? ProductGenderId { get; set; }
+
+        public string? GenderName { get; set; }
+
         public int? Quantity { get; set; }
 
         public int? ProductCartId { get; set; }
 
         public int? ProductInventoryId { get; set; }
 
+        // to be deleted
         public byte[]? Image { get; set; }
+
+        public ImageDetail? ImageDetail { get; set; }
     }
 }
