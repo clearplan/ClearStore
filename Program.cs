@@ -26,6 +26,8 @@ builder.Services.AddDistributedSqlServerCache(options =>
     // you don't actually need this, but i'm doing it anyway
     options.DefaultSlidingExpiration = TimeSpan.FromHours(1);
     options.ExpiredItemsDeletionInterval = TimeSpan.FromHours(1);    
+
+    // some kind of magic here that does some kind of BS
 });
 
 builder.Services
@@ -90,7 +92,6 @@ builder.Services.AddRazorPages().AddMvcOptions(options =>
     options.HtmlHelperOptions.FormInputRenderMode = Microsoft.AspNetCore.Mvc.Rendering.FormInputRenderMode.AlwaysUseCurrentCulture;
     options.HtmlHelperOptions.Html5DateRenderingMode = Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode.CurrentCulture;
 });
-
 
 var app = builder.Build();
 
