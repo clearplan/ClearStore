@@ -170,7 +170,7 @@ namespace ClearStore.Controllers
                     _context.Products.Update(model.Product);
 
                     // add new product images - don't update existing ones
-                    if (model.ProductImages != null)
+                    if (model.ProductImages != null && model.ProductImages.Count > 0)
                     {
                         foreach (var image in model.ProductImages)
                         {

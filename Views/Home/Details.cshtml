@@ -44,6 +44,8 @@
                     </div>
                 </div>
                 <div class="cp-frame fill">
+                    <h4>Item details</h4>
+                    <p>@Model.Product.Description</p>
                     <form asp-action="Details">
                         <input type="hidden" asp-for="UserId" />
                         <input type="hidden" asp-for="Product.Id" />

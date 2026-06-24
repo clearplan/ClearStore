@@ -56,7 +56,7 @@ namespace ClearStore.Controllers
                 .Include(d => d.ProductGender)
                 .AsNoTracking()
                 .Where(p => _context.ProductInventory
-                    .Any(pi => pi.ProductId == p.Id && pi.Quantity > 0))
+                    .Any(pi => pi.ProductId == p.Id && pi.Quantity > 0 && pi.IsVisible == true))
                 .Select(p => new ProductDto
                 {
                     Product = p,
@@ -205,7 +205,7 @@ namespace ClearStore.Controllers
             };
 
             var product = await _context.Products
-                .Where(d => d.Id == id)
+                .Where(d => d.Id == id && d.IsVisible == true)
                 .Include(d => d.ProductGender)
                 .Include(d => d.ProductImages)
                 .Include(d => d.ProductInventory)
@@ -228,7 +228,7 @@ namespace ClearStore.Controllers
                 .Take(4)
                 .ToListAsync();
 
-            var inventory = _context.ProductInventory.Where(d => d.ProductId == id);
+            var inventory = _context.ProductInventory.Where(d => d.ProductId == id && d.IsVisible == true);
 
             if (product.IsApparel)
             {

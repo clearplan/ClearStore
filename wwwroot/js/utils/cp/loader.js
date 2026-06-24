@@ -40,7 +40,9 @@
     }
 
     open() {
-        if (this.dialog.open) return this._openPromise ?? Promise.resolve(this);
+        if (this.dialog.open) {
+            return this._openPromise ?? Promise.resolve(this);
+        }
 
         this._lockScroll();
         this.dialog.showModal();

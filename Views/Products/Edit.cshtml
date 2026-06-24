@@ -9,15 +9,22 @@
             <h1>@ViewData["Title"]</h1>
             <div class="hstack gap space-between">
                 <div class="hstack gap">
-                    <a asp-controller="Home" asp-action="Index" class="cp-button gray">Back to store</a>
-                    <a asp-controller="Products" asp-action="Index" class="cp-button gray">Products</a>
+                    <a asp-controller="Home" asp-action="Index" class="cp-button gray">Store home</a>
+                    <a asp-controller="Products" asp-action="Index" class="cp-button gray">Products home</a>
+                    <a asp-controller="ProductInventory" asp-action="Edit" asp-route-productId="@Model.Product.Id" class="cp-button muted success">Manage inventory</a>
                 </div>
                 <button class="cp-button filled warning" data-delete="@Model.Product.Id">Delete Product</button>
             </div>
         </header>
         <section class="cp-section">
-            <form asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data">
-                <input type="hidden" asp-for="Product.CreatedDate" value="@DateTime.UtcNow" />
+            <div class="cp-notice compact info">
+                <p>
+                    <b>Note: </b>This view manages the product details visible to users. If you need to update size, color, count, etc., click <a asp-controller="ProductInventory" asp-action="Edit" asp-route-productId="@Model.Product.Id" class="link">Manage inventory</a>.
+                </p>
+            </div>
+            <form asp-action="Edit" asp-antiforgery="true" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Product.Id" />
+                <input type="hidden" asp-for="Product.CreatedDate" />
                 <input type="hidden" asp-for="Product.ModifiedDate" value="@DateTime.UtcNow" />
                 <div class="cp-field-row">
                     <div class="cp-field-group">

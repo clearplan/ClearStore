@@ -9,82 +9,91 @@
     <div class="cp-view-content">
         <header class="cp-view-header">
             <h1>@ViewData["PageTitle"]</h1>
-            <a asp-action="Index" class="cp-button gray">Back to inventory</a>
+            <div class="hstack gap">
+                <a asp-action="Index" class="cp-button gray">Inventory home</a>
+                <a asp-controller="Products" asp-action="Edit" asp-route-id="@Model.ProductInventoryDto.Product.Id" class="cp-button gray">Product details</a>
+            </div>
         </header>
         <section class="cp-section">
-            <form asp-action="Edit" asp-route-productId="@dto.Product.Id" method="post">
-                <input type="hidden" asp-for="ProductInventoryDto.Product.Id" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.Name" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.Description" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.CreatedDate" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.ModifiedDate" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.IsApparel" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.ProductGenderId" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.ProductColorCategoryId" />
-                <input type="hidden" asp-for="ProductInventoryDto.Product.IsVisible" />
-                <div class="cp-frame">
-                    @if (dto.ProductImageDto != null)
-                    {
-                        <figure class="istack">
-                            <div class="thumbnail">
-                                <img src="@Url.Action("GetImage", "Images", new { id = dto.ProductImageDto.Id })"
-                                     class="img-10"
-                                     alt="@dto.ProductImageDto.ImageName" />
-                            </div>
-                        </figure>
-                    }
-                    <h4>@dto.Product.Name</h4>
-                    <pre class="text-label">@dto.Product.Description</pre>
-                    <table class="cp-table compact" data-inventory-table>
-                        <tbody>
-                            @if (dto.ProductInventory.Count > 0)
-                            {
-                                for (int i = 0; i < dto.ProductInventory.Count; i++)
-                                {
-                                    var inventory = dto.ProductInventory[i];
-                                    <tr data-row>
-                                        <td>
-                                            <select asp-for="ProductInventoryDto.ProductInventory[@i].ProductSizeId"
-                                                    asp-items="@(new SelectList(Model.ProductSizes, "Id", "Name", inventory.ProductSizeId))"
-                                                    class="cp-field full"
-                                                    data-size></select>
-                                        </td>
-                                        <td>
-                                            <select asp-for="ProductInventoryDto.ProductInventory[@i].ProductColorId"
-                                                    asp-items="@(new SelectList(Model.ProductColors, "Id", "Name", inventory.ProductColorId))"
-                                                    class="cp-field full"
-                                                    data-color></select>
-                                        </td>
-                                        <td>
-                                            <select asp-for="ProductInventoryDto.ProductInventory[@i].ProductOfficeId"
-                                                    asp-items="@(new SelectList(Model.ProductOffices, "Id", "Location", inventory.ProductOfficeId))"
-                                                    class="cp-field full"
-                                                    data-office></select>
-                                        </td>
-                                        <td>
-                                            <input type="hidden" asp-for="ProductInventoryDto.ProductInventory[@i].Id" data-id />
-                                            <input type="hidden" asp-for="ProductInventoryDto.ProductInventory[@i].ProductId" data-productid />
-                                            <input type="hidden" asp-for="ProductInventoryDto.ProductInventory[@i].Threshold" data-threshold />
-                                            <input asp-for="ProductInventoryDto.ProductInventory[@i].Quantity" class="cp-field full" data-quantity />
-                                        </td>
-                                        <td>
-                                            <select asp-for="ProductInventoryDto.ProductInventory[@i].IsVisible" class="cp-field full" data-visibility>
-                                                <option value="true">Visible</option>
-                                                <option value="false">Hidden</option>
-                                            </select>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                    <div class="cp-field-actions">
-                        <button type="submit" role="button" class="cp-button filled" data-submit>Update</button>
-                        <button type="button" role="button" class="cp-button gray" data-add>Add inventory</button>
+            <div class="cp-notice info compact">
+                <p><b>Instructions: </b>Click the <code>Add inventory</code> button below to append a row with <code>size</code>, <code>color</code>, <code>location</code>, <code>quantity</code>, and <code>visibility</code> options.</p>
+            </div>
+            <fieldset class="cp-fieldset">
+                <input type="hidden" asp-for="ProductInventoryDto.Product.Id" data-productid />
+                <legend>Manage inventory</legend>
+                @if (dto.ProductImageDto != null)
+                {
+                    <figure class="cp-frame istack">
+                        <div class="thumbnail">
+                            <img src="@Url.Action("GetImage", "Images", new { id = dto.ProductImageDto.Id })"
+                                 class="img-10"
+                                 alt="@dto.ProductImageDto.ImageName" />
+                        </div>
+                    </figure>
+                }
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label class="cp-field-label">Name</label>
+                        <input type="text" class="cp-field" value="@dto.Product.Name" readonly />
                     </div>
                 </div>
-            </form>
+                <div class="cp-field-row">
+                    <div class="cp-field-group">
+                        <label class="cp-field-label">Description</label>
+                        <input type="text" class="cp-field" value="@dto.Product.Description" readonly />
+                    </div>
+                </div>
+                <table class="cp-table compact" data-inventory-table>
+                    <tbody>
+                        @if (dto.ProductInventory.Count > 0)
+                        {
+                            for (int i = 0; i < dto.ProductInventory.Count; i++)
+                            {
+                                var inventory = dto.ProductInventory[i];
+                                <tr data-row>
+                                    <td>
+                                        <select asp-items="@(new SelectList(Model.ProductSizes, "Id", "Name", inventory.ProductSizeId))"
+                                                class="cp-field full"
+                                                data-size></select>
+                                    </td>
+                                    <td>
+                                        <select asp-items="@(new SelectList(Model.ProductColors, "Id", "Name", inventory.ProductColorId))"
+                                                class="cp-field full"
+                                                data-color></select>
+                                    </td>
+                                    <td>
+                                        <select asp-items="@(new SelectList(Model.ProductOffices, "Id", "Location", inventory.ProductOfficeId))"
+                                                class="cp-field full"
+                                                data-office></select>
+                                    </td>
+                                    <td>
+                                        <input asp-for="ProductInventoryDto.ProductInventory[@i].Quantity" class="cp-field full" data-quantity />
+                                    </td>
+                                    <td>
+                                        <select asp-for="ProductInventoryDto.ProductInventory[@i].IsVisible" class="cp-field full" data-visibility>
+                                            <option value="true">Visible</option>
+                                            <option value="false">Hidden</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="hstack gap-sm">
+                                            <button type="button" class="cp-button filled info compact fill" data-inventory-save>Update</button>
+                                            <button type="button" class="cp-button filled warning compact fill" data-inventory-remove>Delete</button>
+                                        </div>
+                                    </td>
+                                    <input type="hidden" data-id="" value="@inventory.Id" />
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </fieldset>
+            <div class="cp-field-actions">
+                <button type="button" role="button" class="cp-button muted success hstack gap-md" data-add-row>
+                    <i class="fi fi-add-regular"></i>
+                    <span>Add row</span>
+                </button>
+            </div>
         </section>
     </div>
 </div>
@@ -92,37 +101,35 @@
 <template id="inventoryRow">
     <tr data-row>
         <td>
-            <select id="ProductInventoryDto.ProductInventory[0].ProductSizeId"
-                    name="ProductInventoryDto.ProductInventory[0].ProductSizeId"
-                    asp-items="@(new SelectList(Model.ProductSizes, "Id", "Name", null))"
+            <select asp-items="@(new SelectList(Model.ProductSizes, "Id", "Name", null))"
                     class="cp-field full"
-                    data-size></select>
+                    data-inventory-size></select>
         </td>
         <td>
-            <select name="ProductInventoryDto.ProductInventory[0].ProductColorId"
-                    asp-items="@(new SelectList(Model.ProductColors, "Id", "Name", null))"
+            <select asp-items="@(new SelectList(Model.ProductColors, "Id", "Name", null))"
                     class="cp-field full"
-                    data-color></select>
+                    data-inventory-color></select>
         </td>
         <td>
-            <select name="ProductInventoryDto.ProductInventory[0].ProductOfficeId"
-                    asp-items="@(new SelectList(Model.ProductOffices, "Id", "Location", null))"
+            <select asp-items="@(new SelectList(Model.ProductOffices, "Id", "Location", null))"
                     class="cp-field full"
-                    data-office></select>
+                    data-inventory-office></select>
         </td>
         <td>
-            <input type="hidden" name="ProductInventoryDto.ProductInventory[0].Id" data-id />
-            <input type="hidden" name="ProductInventoryDto.ProductInventory[0].ProductId" data-productid />
-            <input type="hidden" name="ProductInventoryDto.ProductInventory[0].Threshold" data-threshold />
-            <input type="number" name="ProductInventoryDto.ProductInventory[0].Quantity" class="cp-field full" placeholder="Enter quantity" data-quantity />
+            <input type="number" class="cp-field full" placeholder="Enter quantity" data-inventory-quantity />
         </td>
         <td>
-            <select name="ProductInventoryDto.ProductInventory[0].IsVisible" class="cp-field full" data-visibility>
+            <select class="cp-field full" data-inventory-visibility>
                 <option value="true">Visible</option>
                 <option value="false">Hidden</option>
             </select>
         </td>
-        <td></td>
+        <td>
+            <div class="hstack gap-sm">
+                <button type="button" class="cp-button muted success compact fill" data-inventory-save>Save</button>
+                <button type="button" class="cp-button muted warning compact fill" data-inventory-remove>Remove</button>
+            </div>
+        </td>
     </tr>
 </template>
 

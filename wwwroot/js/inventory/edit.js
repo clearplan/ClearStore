@@ -1,128 +1,168 @@
-﻿import Loader from '/js/utils/cp/loader.js';
+﻿import CPLoader from '/js/utils/cp/loader.js';
 
-class Inventory {
+class ProductInventory {
     constructor() {
-        this.loader = new Loader();
+        this.loader = new CPLoader();
         this.template = document.querySelector('#inventoryRow');
+        this.productId = document.querySelector('[data-productid]').value;
         this.tbody = document.querySelector('[data-inventory-table] tbody');
-        this.rows = Array.from(this.tbody.querySelectorAll('[data-row]'));
+        this.addButton = document.querySelector('[data-add-row]');
 
-        this.addButton = document.querySelector('[data-add]');
-        this.addButton.addEventListener('click', this.addItem.bind(this));
+        this.init();
     }
 
-    addItem() {
-        let newRow;
-        if (this.rows.length > 0) {
-            newRow = this.rows[this.rows.length - 1].cloneNode(true);
-        }
-        else {
-            newRow = this.template.content.firstElementChild.cloneNode(true);
-        }
+    init() {
+        this.tbody.addEventListener('click', (e) => {
+            const row = e.target.closest('[data-row]');
+            if (!row) {
+                return;
+            }
 
-        const lastCell = newRow.querySelector('td:last-child');
-        const prevDeleteButton = lastCell.querySelector('[data-delete]');
-        if (prevDeleteButton) prevDeleteButton.remove();
-
-        const index = this.rows.length;
-
-        lastCell.insertAdjacentHTML('afterbegin', `
-            <div class="istack p-1 bg-red br-1" data-delete="${index}">
-                <i class="fi fi-delete-regular fs-1 text-white"></i>
-            </div>`);
-
-        this.setFieldAttributes(newRow, index, true);
-
-        this.tbody.append(newRow);
-        this.rows.push(newRow);
-
-        const deleteButton = newRow.querySelector('[data-delete]');
-        deleteButton.addEventListener('click', () => this.deleteRow(newRow));
-    }
-
-    deleteRow(row) {
-        row.remove();
-        this.rows = this.rows.filter(r => r != row);
-        this.resetIds();
-    }
-
-    resetIds() {
-        this.rows.forEach((row, index) => {
-            this.setFieldAttributes(row, index, false);
-            const deleteButton = row.querySelector('[data-delete]');
-            if (deleteButton) {
-                deleteButton.setAttribute('data-delete', index);
+            if (e.target.matches('[data-inventory-save]')) {
+                this.handleSave(row);
+            }
+            else if (e.target.matches('[data-inventory-remove]')) {
+                this.handleRemove(row);
             }
         });
+
+        this.addButton.addEventListener('click', () => this.addRow());
     }
 
-    setFieldAttributes(row, index, resetValues) {
-        let id = row.querySelector('[data-id]');
-        let productId = row.querySelector('[data-productid]');
-        let threshold = row.querySelector('[data-threshold]');
-        let size = row.querySelector('[data-size]');
-        let color = row.querySelector('[data-color]');
-        let office = row.querySelector('[data-office]');
-        let quantity = row.querySelector('[data-quantity]');
-        let visibility = row.querySelector('[data-visibility]');
+    async handleSave(row) {
+        const idInput = row.querySelector('[data-id]');
+        const id = parseInt(idInput?.value || 0);
 
-        if (id) {
-            id.id = `ProductInventoryDto_ProductInventory_${index}__Id`;
-            id.name = `ProductInventoryDto.ProductInventory[${index}].Id`;
-            if (resetValues) {
-                id.value = null;
+        const data = {
+            id: id,
+            productId: parseInt(this.productId),
+            productSizeId: parseInt(row.querySelector('[data-size], [data-inventory-size]').value),
+            productColorId: parseInt(row.querySelector('[data-color], [data-inventory-color]').value),
+            productOfficeId: parseInt(row.querySelector('[data-office], [data-inventory-office]').value),
+            quantity: parseInt(row.querySelector('[data-quantity], [data-inventory-quantity]').value),
+            isVisible: row.querySelector('[data-visibility], [data-inventory-visibility]').value === 'true',
+            threshold: null
+        };
+
+        if (id > 0) {
+            await this.updateItem(data);
+        }
+        else {
+            await this.addItem(row, data);
+        }
+    }
+
+    async addItem(row, data) {
+        this.loader.open();
+        try {
+            const response = await fetch('/api/apiinventory/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                this.finalizeNewRow(row, result.id);
+                
+            }
+            else {
+                this.loader.update('Failed to add item.');
+                this.loader.open();
+            }
+        } catch (err) {
+            this.loader.update('Add error:', err);
+            this.loader.open();
+        }
+        finally {
+            this.loader.close();
+        }
+    }
+
+    async updateItem(data) {
+        this.loader.open();
+
+        try {
+            const response = await fetch(`/api/apiinventory/update/${data.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                console.log('Item updated successfully');
+            }
+            else {
+                this.loader.update('Failed to update item.');
+                this.loader.open();
             }
         }
-        if (productId) {
-            productId.id = `ProductInventoryDto_ProductInventory_${index}__ProductId`;
-            productId.name = `ProductInventoryDto.ProductInventory[${index}].ProductId`;
-            if (resetValues) {
-                productId.value = null;
+        catch (err) {
+            this.loader.update('Update error:', err);
+            this.loader.open();
+        }
+        finally {
+            this.loader.close();
+        }
+    }
+
+    async handleRemove(row) {
+        const idInput = row.querySelector('[data-id]');
+        const id = parseInt(idInput?.value || 0);
+
+        if (id === 0) {
+            row.remove();
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this inventory record?')) {
+            this.loader.open();
+            try {
+                const response = await fetch(`/api/apiinventory/delete/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    row.remove();
+                }
+                else {
+                    this.loader.update('Failed to delete item.');
+                    this.loader.open();
+                }
+            }
+            catch (err) {
+                this.loader.update('Delete error:', err);
+                this.loader.open();
+            }
+            finally {
+                this.loader.close();
             }
         }
-        if (threshold) {
-            threshold.id = `ProductInventoryDto_ProductInventory_${index}__Threshold`;
-            threshold.name = `ProductInventoryDto.ProductInventory[${index}].Threshold`;
-            if (resetValues) {
-                threshold.value = null;
-            }
+    }
+
+    addRow() {
+        const clone = this.template.content.cloneNode(true);
+        this.tbody.appendChild(clone);
+    }
+
+    finalizeNewRow(row, newId) {
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.setAttribute('data-id', '');
+        idInput.value = newId;
+        row.appendChild(idInput);
+
+        const saveBtn = row.querySelector('[data-inventory-save]');
+        if (saveBtn) {
+            saveBtn.textContent = 'Update';
+            saveBtn.classList.remove('muted', 'success');
+            saveBtn.classList.add('filled', 'info');
         }
-        if (size) {
-            size.id = `ProductInventoryDto_ProductInventory_${index}__ProductSizeId`;
-            size.name = `ProductInventoryDto.ProductInventory[${index}].ProductSizeId`;
-            if (resetValues) {
-                size.selectedIndex = 0;
-            }
-        }
-        if (color) {
-            color.id = `ProductInventoryDto_ProductInventory_${index}__ProductColorId`;
-            color.name = `ProductInventoryDto.ProductInventory[${index}].ProductColorId`;
-            if (resetValues) {
-                color.selectedIndex = 0;
-            }
-        }
-        if (office) {
-            office.id = `ProductInventoryDto_ProductInventory_${index}__ProductOfficeId`;
-            office.name = `ProductInventoryDto.ProductInventory[${index}].ProductOfficeId`;
-            if (resetValues) {
-                office.selectedIndex = 0;
-            }
-        }
-        if (quantity) {
-            quantity.id = `ProductInventoryDto_ProductInventory_${index}__Quantity`;
-            quantity.name = `ProductInventoryDto.ProductInventory[${index}].Quantity`;
-            if (resetValues) {
-                quantity.value = null;
-            }
-        }
-        if (visibility) {
-            visibility.id = `ProductInventoryDto_ProductInventory_${index}__IsVisible`;
-            visibility.name = `ProductInventoryDto.ProductInventory[${index}].IsVisible`;
-            if (resetValues) {
-                visibility.selectedIndex = 0;
-            }
+
+        const removeBtn = row.querySelector('[data-inventory-remove]');
+        if (removeBtn) {
+            removeBtn.textContent = 'Delete';
+            removeBtn.classList.remove('muted');
+            removeBtn.classList.add('filled');
         }
     }
 }
 
-new Inventory();
+new ProductInventory();

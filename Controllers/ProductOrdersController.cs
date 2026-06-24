@@ -1,9 +1,7 @@
-﻿using ClearScore.Extensions;
-using ClearStore.Data;
+﻿using ClearStore.Data;
 using ClearStore.Extensions;
 using ClearStore.Models;
 using ClearStore.Models.Dto;
-using ClearStore.ViewComponents;
 using ClearStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +14,8 @@ using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.Collections;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using static Azure.Core.HttpHeader;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ClearStore.Controllers
 {
@@ -33,6 +26,8 @@ namespace ClearStore.Controllers
     {
         private readonly StoreContext _context;
         private readonly GraphServiceClient _client;
+        private readonly string adminEmail = "jodygoldenberg@clearplanconsulting.com";
+        private readonly string chelseyEmail = "chelseymoore@clearplanconsulting.com";
 
         public ProductOrdersController(StoreContext context, GraphServiceClient client)
         {
@@ -273,7 +268,7 @@ namespace ClearStore.Controllers
         }
 
 
-        private async Task SendConfirmationEmailAsync(ProductOrderModel model, string to = "heatherlaudani@clearplanconsulting.com")
+        private async Task SendConfirmationEmailAsync(ProductOrderModel model)
         {
             string hyperlink = $"https://clearstore.azurewebsites.net/product-orders/details/{model.ProductOrder.ProductOrderId}";
             string subject = $"New ClearStore order - {model.ProductOrder.Recipient}";
@@ -411,8 +406,15 @@ namespace ClearStore.Controllers
                             { 
                                 EmailAddress = new EmailAddress 
                                 { 
-                                    Address = to?.Trim() 
+                                    Address = adminEmail 
                                 } 
+                            },
+                            new Recipient
+                            {
+                                EmailAddress = new EmailAddress
+                                {
+                                    Address = chelseyEmail
+                                }
                             }
                         },
                         CcRecipients = new List<Recipient>()

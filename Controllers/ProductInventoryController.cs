@@ -67,29 +67,6 @@ namespace ClearStore.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int productId, ProductInventoryCrudModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var inventory = model.ProductInventoryDto.ProductInventory;
-
-                if (inventory.Count > 0)
-                {
-                    _context.ProductInventory.UpdateRange(inventory);
-                    await _context.SaveChangesAsync();
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            model = await GetProductInventoryModelAsync(productId);
-
-            return View(model);
-        }
-
-
         private async Task<ProductInventoryCrudModel> GetProductInventoryModelAsync(int productId)
         {
             var productInventory = await _context.Products
@@ -131,32 +108,6 @@ namespace ClearStore.Controllers
             };
         }
 
-
-
-        //[Route("{id:int}")]
-        //public IActionResult GetImage(int id)
-        //{
-        //    var image = _context.ProductImages
-        //        .Where(i => i.Id == id)
-        //        .Select(i => new { i.ImageData, i.ImageName })
-        //        .FirstOrDefault();
-
-        //    if (image == null || image.ImageData == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var extension = Path.GetExtension(image.ImageName)?.ToLowerInvariant();
-        //    var contentType = extension switch
-        //    {
-        //        ".jpg" or ".jpeg" => "image/jpeg",
-        //        ".png" => "image/png",
-        //        ".gif" => "image/gif",
-        //        _ => "application/octet-stream"
-        //    };
-
-        //    return File(image.ImageData, contentType);
-        //}
 
 
         [HttpGet]
