@@ -2,6 +2,7 @@
 using ClearStore.Extensions;
 using ClearStore.Models;
 using ClearStore.Models.Dto;
+using ClearStore.Security;
 using ClearStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -389,6 +390,8 @@ namespace ClearStore.Controllers
                     ContentBytes = pdfBytes
                 });
 
+                var recipients = await GetGroupEmailRecipientsAsync(PermissionGroup.AppWebStoreOrderRecipients);
+
                 var messageBody = new SendMailPostRequestBody
                 {
                     Message = new Message
@@ -400,23 +403,7 @@ namespace ClearStore.Controllers
                             Content = body.ToString()
                         },
                         Importance = Importance.Normal,
-                        ToRecipients = new List<Recipient>()
-                        {
-                            new Recipient 
-                            { 
-                                EmailAddress = new EmailAddress 
-                                { 
-                                    Address = adminEmail 
-                                } 
-                            },
-                            new Recipient
-                            {
-                                EmailAddress = new EmailAddress
-                                {
-                                    Address = chelseyEmail
-                                }
-                            }
-                        },
+                        ToRecipients = recipients,
                         CcRecipients = new List<Recipient>()
                         {
                             new Recipient
@@ -672,6 +659,52 @@ namespace ClearStore.Controllers
             //};
 
             //await _client.Me.SendMail.PostAsync(email);
+        }
+
+
+        private async Task<List<Recipient>> GetGroupEmailRecipientsAsync(string groupId)
+        {
+            var recipients = new List<Recipient>();
+
+            var members = await _client.Groups[groupId].Members.GetAsync(config =>
+            {
+                config.QueryParameters.Select = ["id", "displayName", "mail", "userPrincipalName"];
+            });
+
+            while (members?.Value != null)
+            {
+                foreach (var member in members.Value)
+                {
+                    if (member is User user)
+                    {
+                        var address = !string.IsNullOrWhiteSpace(user.Mail)
+                            ? user.Mail
+                            : user.UserPrincipalName;
+
+                        if (!string.IsNullOrWhiteSpace(address))
+                        {
+                            recipients.Add(new Recipient
+                            {
+                                EmailAddress = new EmailAddress
+                                {
+                                    Address = address
+                                }
+                            });
+                        }
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(members.OdataNextLink))
+                {
+                    break;
+                }
+
+                members = await _client.Groups[groupId].Members
+                    .WithUrl(members.OdataNextLink)
+                    .GetAsync();
+            }
+
+            return recipients;
         }
     }
 }
