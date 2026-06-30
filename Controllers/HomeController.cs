@@ -1,33 +1,13 @@
 using ClearStore.Data;
-using ClearStore.Extensions;
 using ClearStore.Models;
 using ClearStore.Models.Dto;
 using ClearStore.ViewModels;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Graph;
-using Microsoft.Graph.Me.SendMail;
-using Microsoft.Graph.Models;
-using Microsoft.Graph.Models.ExternalConnectors;
-using Microsoft.Graph.Users.Item.SendMail;
 using Microsoft.Identity.Web;
-using MimeKit;
-using QuestPDF.Drawing;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
 using System.Security.Claims;
-using System.Text;
-using EmailAddress = SendGrid.Helpers.Mail.EmailAddress;
 
 namespace ClearStore.Controllers
 {
