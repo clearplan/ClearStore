@@ -44,8 +44,6 @@ builder.Services
 //    options.SlidingExpiration = true;
 //});
 
-//builder.Services.AddMicrosoftIdentityConsentHandler();
-
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("administrators", b => b.RequireAssertion(c =>
