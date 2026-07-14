@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Graph;
 using Microsoft.Graph.Me.SendMail;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ODataErrors;
 using Microsoft.Identity.Web;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
@@ -138,9 +139,9 @@ namespace ClearStore.Controllers
 
                     await _context.ProductOrders.AddAsync(model.ProductOrder);
                     await _context.SaveChangesAsync();
-
+                    
                     await SendConfirmationEmailAsync(model);
-
+                    
                     await transaction.CommitAsync();
 
                     TempData["OrderComplete"] = true;
@@ -275,6 +276,7 @@ namespace ClearStore.Controllers
             string subject = $"New ClearStore order - {model.ProductOrder.Recipient}";
             StringBuilder body = new StringBuilder();
             var attachments = new List<Attachment>();
+            var recipients = new List<Recipient>();
 
             body.AppendLine("<div style=\"max-width:1366px;margin:0 auto;\">");
             body.AppendLine("<div style=\"font-family:system-ui;font-size:14px;\">");
@@ -390,7 +392,15 @@ namespace ClearStore.Controllers
                     ContentBytes = pdfBytes
                 });
 
-                var recipients = await GetGroupEmailRecipientsAsync(PermissionGroup.AppWebStoreOrderRecipients);
+                try
+                {
+                    recipients = await GetGroupEmailRecipientsAsync(PermissionGroup.AppWebStoreOrderRecipients);
+
+                }
+                catch (ODataError error)
+                {
+                    throw new InvalidOperationException($"Unable to retrieve group: {error.Error?.Message}, Error code: {error.Error?.Code}");
+                }
 
                 var messageBody = new SendMailPostRequestBody
                 {
