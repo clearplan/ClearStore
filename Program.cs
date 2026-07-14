@@ -26,8 +26,6 @@ builder.Services.AddDistributedSqlServerCache(options =>
     // you don't actually need this, but i'm doing it anyway
     options.DefaultSlidingExpiration = TimeSpan.FromHours(1);
     options.ExpiredItemsDeletionInterval = TimeSpan.FromHours(1);    
-
-    // some kind of magic here that does some kind of BS
 });
 
 builder.Services
@@ -36,13 +34,6 @@ builder.Services
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
     .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
     .AddDistributedTokenCaches();
-
-//builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-//{
-//    options.AccessDeniedPath = new PathString("/account/accessdenied");
-//    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-//    options.SlidingExpiration = true;
-//});
 
 builder.Services.AddAuthorization(options =>
 {
